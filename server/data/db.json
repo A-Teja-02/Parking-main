@@ -1,0 +1,419 @@
+{
+  "schema_version": "3.0",
+  "users": [
+    {
+      "id": "a1000000-0000-0000-0000-000000000001",
+      "name": "Admin User",
+      "email": "admin@quadrantitservices.com",
+      "department": "HR",
+      "vehicle_number": "MH 14 AB 1111",
+      "avatar_initials": "AD",
+      "role": "hr",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a2000000-0000-0000-0000-000000000001",
+      "name": "Rahul Verma",
+      "email": "rahul.verma@quadrantitservices.com",
+      "department": "Management",
+      "vehicle_number": "MH 12 AB 1234",
+      "avatar_initials": "RV",
+      "role": "manager",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a2000000-0000-0000-0000-000000000002",
+      "name": "Anita Desai",
+      "email": "anita.desai@quadrantitservices.com",
+      "department": "Management",
+      "vehicle_number": "MH 12 AB 5678",
+      "avatar_initials": "AD",
+      "role": "manager",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a2000000-0000-0000-0000-000000000003",
+      "name": "Vikram Shah",
+      "email": "vikram.shah@quadrantitservices.com",
+      "department": "Management",
+      "vehicle_number": "MH 12 AB 9012",
+      "avatar_initials": "VS",
+      "role": "manager",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000001",
+      "name": "Priya Sharma",
+      "email": "priya.sharma@quadrantitservices.com",
+      "department": "Engineering",
+      "vehicle_number": "MH 12 AB 3456",
+      "avatar_initials": "PS",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000002",
+      "name": "Amit Kumar",
+      "email": "amit.kumar@quadrantitservices.com",
+      "department": "Engineering",
+      "vehicle_number": "MH 12 CD 1234",
+      "avatar_initials": "AK",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000003",
+      "name": "Sneha Patel",
+      "email": "sneha.patel@quadrantitservices.com",
+      "department": "Design",
+      "vehicle_number": "MH 12 EF 5678",
+      "avatar_initials": "SP",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000004",
+      "name": "Rohan Gupta",
+      "email": "rohan.gupta@quadrantitservices.com",
+      "department": "Marketing",
+      "vehicle_number": "MH 12 GH 9012",
+      "avatar_initials": "RG",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000005",
+      "name": "Neha Singh",
+      "email": "neha.singh@quadrantitservices.com",
+      "department": "Engineering",
+      "vehicle_number": "MH 12 IJ 3456",
+      "avatar_initials": "NS",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000006",
+      "name": "Karan Malhotra",
+      "email": "karan.malhotra@quadrantitservices.com",
+      "department": "Sales",
+      "vehicle_number": "MH 12 KL 7890",
+      "avatar_initials": "KM",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000007",
+      "name": "Pooja Joshi",
+      "email": "pooja.joshi@quadrantitservices.com",
+      "department": "Finance",
+      "vehicle_number": "MH 12 MN 1234",
+      "avatar_initials": "PJ",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    },
+    {
+      "id": "a3000000-0000-0000-0000-000000000008",
+      "name": "Siddharth Rao",
+      "email": "siddharth.rao@quadrantitservices.com",
+      "department": "Engineering",
+      "vehicle_number": "MH 12 OP 5678",
+      "avatar_initials": "SR",
+      "role": "employee",
+      "is_active": true,
+      "password_hash": "$2b$12$YGI4KRIq20HCTSh8g3YKq.Dvvc4rBb9UEjFCmcLyVjR4nqFsYB1N2",
+      "account_status": "active",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "updated_at": "2026-07-07T18:28:23.011198"
+    }
+  ],
+  "floors": [
+    {
+      "id": "floor-b1",
+      "name": "Basement 1",
+      "label": "B1",
+      "order": 1
+    },
+    {
+      "id": "floor-b2",
+      "name": "Basement 2",
+      "label": "B2",
+      "order": 2
+    },
+    {
+      "id": "floor-b3",
+      "name": "Basement 3",
+      "label": "B3",
+      "order": 3
+    }
+  ],
+  "slots": [
+    {
+      "id": "P101",
+      "label": "P101",
+      "floor_id": "floor-b1",
+      "position": 1,
+      "status": "active",
+      "reserved_for_manager_id": "a2000000-0000-0000-0000-000000000001"
+    },
+    {
+      "id": "P102",
+      "label": "P102",
+      "floor_id": "floor-b1",
+      "position": 2,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P103",
+      "label": "P103",
+      "floor_id": "floor-b1",
+      "position": 3,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P104",
+      "label": "P104",
+      "floor_id": "floor-b1",
+      "position": 4,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P105",
+      "label": "P105",
+      "floor_id": "floor-b1",
+      "position": 5,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P106",
+      "label": "P106",
+      "floor_id": "floor-b1",
+      "position": 6,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P107",
+      "label": "P107",
+      "floor_id": "floor-b1",
+      "position": 7,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P108",
+      "label": "P108",
+      "floor_id": "floor-b1",
+      "position": 8,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P201",
+      "label": "P201",
+      "floor_id": "floor-b2",
+      "position": 1,
+      "status": "active",
+      "reserved_for_manager_id": "a2000000-0000-0000-0000-000000000002"
+    },
+    {
+      "id": "P202",
+      "label": "P202",
+      "floor_id": "floor-b2",
+      "position": 2,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P203",
+      "label": "P203",
+      "floor_id": "floor-b2",
+      "position": 3,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P204",
+      "label": "P204",
+      "floor_id": "floor-b2",
+      "position": 4,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P205",
+      "label": "P205",
+      "floor_id": "floor-b2",
+      "position": 5,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P206",
+      "label": "P206",
+      "floor_id": "floor-b2",
+      "position": 6,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P207",
+      "label": "P207",
+      "floor_id": "floor-b2",
+      "position": 7,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P208",
+      "label": "P208",
+      "floor_id": "floor-b2",
+      "position": 8,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P301",
+      "label": "P301",
+      "floor_id": "floor-b3",
+      "position": 1,
+      "status": "active",
+      "reserved_for_manager_id": "a2000000-0000-0000-0000-000000000003"
+    },
+    {
+      "id": "P302",
+      "label": "P302",
+      "floor_id": "floor-b3",
+      "position": 2,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P303",
+      "label": "P303",
+      "floor_id": "floor-b3",
+      "position": 3,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P304",
+      "label": "P304",
+      "floor_id": "floor-b3",
+      "position": 4,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P305",
+      "label": "P305",
+      "floor_id": "floor-b3",
+      "position": 5,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P306",
+      "label": "P306",
+      "floor_id": "floor-b3",
+      "position": 6,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P307",
+      "label": "P307",
+      "floor_id": "floor-b3",
+      "position": 7,
+      "status": "active",
+      "reserved_for_manager_id": null
+    },
+    {
+      "id": "P308",
+      "label": "P308",
+      "floor_id": "floor-b3",
+      "position": 8,
+      "status": "active",
+      "reserved_for_manager_id": null
+    }
+  ],
+  "reservations": [
+    {
+      "id": "5fbe139b-68be-41e8-845d-bbd78ecb27af",
+      "user_id": "a3000000-0000-0000-0000-000000000001",
+      "user_name": "Priya Sharma",
+      "slot_id": "P102",
+      "vehicle_number": "MH 12 AB 3456",
+      "date": "2026-07-08",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "reserved_by": "a3000000-0000-0000-0000-000000000001",
+      "status": "active"
+    },
+    {
+      "id": "c5a5b539-3256-42eb-80e1-eec73e6e3a4b",
+      "user_id": "a3000000-0000-0000-0000-000000000002",
+      "user_name": "Amit Kumar",
+      "slot_id": "P103",
+      "vehicle_number": "MH 12 CD 1234",
+      "date": "2026-07-08",
+      "created_at": "2026-07-07T18:28:23.011198",
+      "reserved_by": "a3000000-0000-0000-0000-000000000002",
+      "status": "active"
+    }
+  ],
+  "manager_releases": [
+    {
+      "manager_id": "a2000000-0000-0000-0000-000000000001",
+      "slot_id": "P101",
+      "release_date": "2026-07-08"
+    }
+  ],
+  "password_reset_tokens": []
+}

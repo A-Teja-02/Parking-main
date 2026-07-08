@@ -1,0 +1,139 @@
+import { useState } from 'react';
+import { useParkingStore } from '../store/useParkingStore';
+import { useAdminStore } from '../store/useAdminStore';
+import { useAppStore } from '../store/useAppStore';
+import { api } from '../services/api';
+import { Edit2, ShieldAlert } from 'lucide-react';
+import type { ParkingSlot } from '../types';
+
+export function ParkingManagement() {
+  const { floors, slots, selectedFloorId, setSelectedFloorId, fetchSlots } = useParkingStore();
+  const { users } = useAdminStore();
+  const { addToast } = useAppStore();
+  
+  const [editingSlot, setEditingSlot] = useState<ParkingSlot | null>(null);
+  const [status, setStatus] = useState('');
+  const [managerId, setManagerId] = useState('');
+
+  const floorSlots = slots.filter(s => s.floor_id === selectedFloorId);
+  const managers = users.filter(u => u.role === 'manager');
+
+  const handleEdit = (slot: ParkingSlot) => {
+    setEditingSlot(slot);
+    setStatus(slot.status);
+    setManagerId(slot.reserved_for_manager_id || '');
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSlot) return;
+
+    try {
+      if (status !== editingSlot.status) {
+        await api.slots.setStatus(editingSlot.id, status);
+      }
+      
+      if (managerId !== (editingSlot.reserved_for_manager_id || '')) {
+        if (managerId) {
+          await api.slots.assignManager(editingSlot.id, managerId);
+        } else {
+          await api.slots.removeManager(editingSlot.id);
+        }
+      }
+
+      await fetchSlots();
+      setEditingSlot(null);
+      addToast({ type: 'success', message: 'Slot updated successfully.' });
+    } catch (err: any) {
+      addToast({ type: 'error', message: err.message || 'Failed to update slot.' });
+    }
+  };
+
+  return (
+    <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E4E7EC', overflow: 'hidden' }}>
+      <div style={{ padding: '20px 24px', borderBottom: '1px solid #E4E7EC' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#101828' }}>Parking Lots Configuration</h2>
+      </div>
+
+      <div style={{ padding: '24px' }}>
+        {/* Floor selection */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+          {floors.map(floor => (
+            <button
+              key={floor.id}
+              onClick={() => setSelectedFloorId(floor.id)}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: '1px solid',
+                borderColor: selectedFloorId === floor.id ? '#1E3A5F' : '#E4E7EC',
+                background: selectedFloorId === floor.id ? '#EEF2FF' : '#FFFFFF',
+                color: selectedFloorId === floor.id ? '#1E3A5F' : '#667085',
+                fontWeight: '500',
+                cursor: 'pointer'
+              }}
+            >
+              {floor.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
+          {floorSlots.map(slot => (
+            <div key={slot.id} style={{ padding: '16px', border: '1px solid #E4E7EC', borderRadius: '12px', background: '#F9FAFB' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                <div>
+                  <div style={{ fontSize: '16px', fontWeight: '600', color: '#101828' }}>{slot.label}</div>
+                  <div style={{ fontSize: '12px', color: '#667085', marginTop: '4px', textTransform: 'capitalize' }}>Status: {slot.status}</div>
+                </div>
+                <button onClick={() => handleEdit(slot)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4A6FA5' }}>
+                  <Edit2 size={16} />
+                </button>
+              </div>
+
+              {slot.reserved_for_manager_id && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#92400E', background: '#FEF3C7', padding: '6px 8px', borderRadius: '6px' }}>
+                  <ShieldAlert size={14} />
+                  Manager Reserved
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {editingSlot && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+          <div style={{ background: '#FFF', padding: '32px', borderRadius: '16px', width: '400px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '24px' }}>Edit Slot {editingSlot.label}</h3>
+            <form onSubmit={handleSave}>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>Status</label>
+                <select value={status} onChange={e => setStatus(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #D1D5DB' }}>
+                  <option value="active">Active</option>
+                  <option value="maintenance">Maintenance</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>Assign Manager</label>
+                <select value={managerId} onChange={e => setManagerId(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #D1D5DB' }}>
+                  <option value="">None</option>
+                  {managers.map(m => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button type="button" onClick={() => setEditingSlot(null)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #D1D5DB', background: '#FFF', cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: '#1E3A5F', color: '#FFF', cursor: 'pointer' }}>Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

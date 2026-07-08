@@ -1,0 +1,129 @@
+import { create } from 'zustand';
+import { api } from '../services/api';
+import { useAuthStore } from './useAuthStore';
+import type { Floor, ParkingSlot, Reservation, ManagerRelease } from '../types';
+
+interface ParkingState {
+  floors: Floor[];
+  slots: ParkingSlot[];
+  reservations: Reservation[];
+  managerReleases: ManagerRelease[];
+  selectedFloorId: string | null;
+  isLoading: boolean;
+  tomorrowDate: string;
+  isWeekend: boolean;
+  
+  fetchFloors: () => Promise<void>;
+  fetchSlots: (floorId?: string) => Promise<void>;
+  fetchReservations: (date: string) => Promise<void>;
+  fetchManagerReleases: (date: string) => Promise<void>;
+  fetchStatus: () => Promise<void>;
+  setSelectedFloorId: (id: string | null) => void;
+  setIsLoading: (loading: boolean) => void;
+  createReservation: (slotId: string, vehicleNumber: string) => Promise<void>;
+  cancelReservation: (id: string) => Promise<void>;
+}
+
+export const useParkingStore = create<ParkingState>((set, get) => ({
+  floors: [],
+  slots: [],
+  reservations: [],
+  managerReleases: [],
+  selectedFloorId: null,
+  isLoading: false,
+  tomorrowDate: '',
+  isWeekend: false,
+
+  fetchFloors: async () => {
+    try {
+      const floors = await api.floors.list();
+      floors.sort((a, b) => a.order - b.order);
+      set({ floors });
+      if (floors.length > 0) {
+        set((state) => ({ selectedFloorId: state.selectedFloorId || floors[0].id }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch floors', err);
+    }
+  },
+
+  fetchSlots: async (floorId?: string) => {
+    set({ isLoading: true });
+    try {
+      const slots = await api.slots.list(floorId);
+      slots.sort((a, b) => a.position - b.position);
+      set({ slots });
+    } catch (err) {
+      console.error('Failed to fetch slots', err);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchReservations: async (date: string) => {
+    try {
+      const reservations = await api.reservations.list(date);
+      set({ reservations });
+    } catch (err) {
+      console.error('Failed to fetch reservations', err);
+    }
+  },
+
+  fetchManagerReleases: async (date: string) => {
+    try {
+      const managerReleases = await api.slots.getReleases(date);
+      set({ managerReleases });
+    } catch (err) {
+      console.error('Failed to fetch manager releases', err);
+    }
+  },
+
+  fetchStatus: async () => {
+    try {
+      const status = await api.status.getSlotStatus();
+      set({ tomorrowDate: status.tomorrow, isWeekend: status.is_weekend });
+    } catch (err) {
+      console.error('Failed to fetch status', err);
+    }
+  },
+
+  setSelectedFloorId: (id) => set({ selectedFloorId: id }),
+  setIsLoading: (loading) => set({ isLoading: loading }),
+
+  createReservation: async (slotId, vehicleNumber) => {
+    set({ isLoading: true });
+    try {
+      const { user } = useAuthStore.getState();
+      const { tomorrowDate } = get();
+      if (!user) throw new Error('Not authenticated');
+      const newRes = await api.reservations.create({
+        user_id: user.id,
+        user_name: user.name,
+        slot_id: slotId,
+        vehicle_number: vehicleNumber,
+        date: tomorrowDate,
+      });
+      set((state) => ({ reservations: [...state.reservations, newRes] }));
+    } catch (err) {
+      console.error('Failed to create reservation', err);
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  cancelReservation: async (id) => {
+    set({ isLoading: true });
+    try {
+      await api.reservations.cancel(id);
+      set((state) => ({
+        reservations: state.reservations.filter((r) => r.id !== id),
+      }));
+    } catch (err) {
+      console.error('Failed to cancel reservation', err);
+      throw err;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));
