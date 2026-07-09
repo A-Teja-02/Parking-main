@@ -66,65 +66,7 @@ def get_me(user: User = Depends(get_current_user)):
     return user
 
 
-# ─── Account Activation (First-Time Signup) ──────────────────────────────────
 
-@router.post("/activate/request")
-def activate_request(request: ActivateRequestSchema, db: Session = Depends(get_db)):
-    """
-    Step 1: Employee enters their company email.
-    Validates domain, checks employee exists, sends OTP.
-    """
-    try:
-        result = auth_service.request_activation(db, request.email)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.post("/activate/verify")
-def activate_verify(request: ActivateVerifySchema, db: Session = Depends(get_db)):
-    """
-    Step 2: Employee enters the 6-digit OTP to verify.
-    """
-    try:
-        result = auth_service.verify_activation_otp(db, request.email, request.otp)
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.post("/activate/complete")
-def activate_complete(request: ActivateCompleteSchema, db: Session = Depends(get_db)):
-    """
-    Step 3: Employee sets their password. Account becomes active.
-    """
-    # Validate password match
-    if request.password != request.confirm_password:
-        raise HTTPException(status_code=400, detail="Passwords do not match.")
-
-    # Validate password strength
-    if len(request.password) < 8:
-        raise HTTPException(
-            status_code=400,
-            detail="Password must be at least 8 characters long.",
-        )
-
-    has_upper = any(c.isupper() for c in request.password)
-    has_lower = any(c.islower() for c in request.password)
-    has_digit = any(c.isdigit() for c in request.password)
-    if not (has_upper and has_lower and has_digit):
-        raise HTTPException(
-            status_code=400,
-            detail="Password must contain at least one uppercase letter, one lowercase letter, and one number.",
-        )
-
-    try:
-        result = auth_service.complete_activation(
-            db, request.name, request.email, request.otp, request.password
-        )
-        return result
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ─── Forgot Password ─────────────────────────────────────────────────────────
@@ -191,3 +133,37 @@ def change_password(
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.put("/profile", response_model=User)
+def update_profile(
+    data: dict,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Update the currently logged-in user's own profile (name, department, vehicle_number)."""
+    # Restrict allowed update fields for self-management
+    name = data.get("name", user.name).strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Name cannot be empty")
+        
+    department = data.get("department", user.department).strip()
+    vehicle_number = data.get("vehicle_number", user.vehicle_number).strip().upper()
+    
+    # Calculate avatar initials
+    words = [w for w in name.split() if w]
+    initials = "".join([w[0] for w in words]).upper()[:2]
+    if not initials:
+        initials = "US"
+        
+    update_data = {
+        "name": name,
+        "department": department,
+        "vehicle_number": vehicle_number,
+        "avatar_initials": initials
+    }
+    
+    from services import user_service
+    updated = user_service.update_user(db, user.id, update_data)
+    if not updated:
+        raise HTTPException(status_code=404, detail="User not found")
+    return updated

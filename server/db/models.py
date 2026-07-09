@@ -80,6 +80,7 @@ class Floor(Base):
     name = Column(String(50), nullable=False)
     label = Column(String(10), nullable=False)
     order = Column(Integer, nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
 
     def __repr__(self):
         return f"<Floor {self.name}>"

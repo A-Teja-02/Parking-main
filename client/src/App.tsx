@@ -4,23 +4,31 @@ import { Navbar } from './components/Navbar';
 import { DashboardPage } from './pages/DashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
+
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { WeekendScreen } from './components/WeekendScreen';
 import { ToastContainer } from './components/Toast';
 import { AuthGuard } from './components/AuthGuard';
 import { useAuthStore } from './store/useAuthStore';
 import { useParkingStore } from './store/useParkingStore';
+import { ChangePasswordModal } from './components/ChangePasswordModal';
+import { useAppStore } from './store/useAppStore';
+import { ProfilePage } from './pages/ProfilePage';
 
-type AuthView = 'login' | 'activate' | 'forgot-password';
+type AuthView = 'login' | 'forgot-password';
 
 function AppContent() {
   const { role } = useAuthStore();
   const { isWeekend, fetchStatus } = useParkingStore();
+  const { currentView } = useAppStore();
 
   useEffect(() => {
     fetchStatus();
   }, [fetchStatus]);
+
+  if (currentView === 'profile') {
+    return <ProfilePage />;
+  }
 
   if (role === 'hr') {
     return <AdminDashboardPage />;
@@ -59,7 +67,6 @@ function App() {
     return (
       <>
         {authView === 'login' && <LoginPage onNavigate={handleNavigate} />}
-        {authView === 'activate' && <SignupPage onNavigate={handleNavigate} />}
         {authView === 'forgot-password' && <ForgotPasswordPage onNavigate={handleNavigate} />}
         <ToastContainer />
       </>
@@ -91,6 +98,7 @@ function App() {
         </footer>
 
         <ToastContainer />
+        <ChangePasswordModal />
       </div>
     </AuthGuard>
   );

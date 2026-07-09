@@ -17,6 +17,7 @@ export interface Floor {
   name: string;
   label: string;
   order: number;
+  is_active: boolean;
 }
 
 export interface ParkingSlot {
@@ -26,6 +27,7 @@ export interface ParkingSlot {
   position: number;
   status: string;
   reserved_for_manager_id?: string | null;
+  reserved_for_manager_name?: string | null;
 }
 
 export interface Reservation {
@@ -60,6 +62,7 @@ export interface SlotStatus {
   state: SlotState;
   reservation?: Reservation;
   manager_id?: string;
+  manager_name?: string;
 }
 
 export interface Toast {

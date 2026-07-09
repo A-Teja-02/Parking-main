@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import { api } from '../services/api';
 import { useAuthStore } from './useAuthStore';
-import type { Floor, ParkingSlot, Reservation, ManagerRelease } from '../types';
+import type { Floor, ParkingSlot, Reservation, ManagerRelease, User } from '../types';
 
 interface ParkingState {
   floors: Floor[];
   slots: ParkingSlot[];
   reservations: Reservation[];
   managerReleases: ManagerRelease[];
+  users: User[];
   selectedFloorId: string | null;
   isLoading: boolean;
   tomorrowDate: string;
@@ -18,10 +19,12 @@ interface ParkingState {
   fetchReservations: (date: string) => Promise<void>;
   fetchManagerReleases: (date: string) => Promise<void>;
   fetchStatus: () => Promise<void>;
+  fetchUsers: () => Promise<void>;
   setSelectedFloorId: (id: string | null) => void;
   setIsLoading: (loading: boolean) => void;
   createReservation: (slotId: string, vehicleNumber: string) => Promise<void>;
   cancelReservation: (id: string) => Promise<void>;
+  toggleFloorStatus: (id: string, is_active: boolean) => Promise<void>;
 }
 
 export const useParkingStore = create<ParkingState>((set, get) => ({
@@ -29,6 +32,7 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
   slots: [],
   reservations: [],
   managerReleases: [],
+  users: [],
   selectedFloorId: null,
   isLoading: false,
   tomorrowDate: '',
@@ -90,6 +94,15 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
   setSelectedFloorId: (id) => set({ selectedFloorId: id }),
   setIsLoading: (loading) => set({ isLoading: loading }),
 
+  fetchUsers: async () => {
+    try {
+      const users = await api.users.list();
+      set({ users });
+    } catch (err) {
+      console.error('Failed to fetch users', err);
+    }
+  },
+
   createReservation: async (slotId, vehicleNumber) => {
     set({ isLoading: true });
     try {
@@ -124,6 +137,18 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
       throw err;
     } finally {
       set({ isLoading: false });
+    }
+  },
+
+  toggleFloorStatus: async (id, is_active) => {
+    try {
+      await api.floors.toggleStatus(id, is_active);
+      const floors = await api.floors.list();
+      floors.sort((a, b) => a.order - b.order);
+      set({ floors });
+    } catch (err) {
+      console.error('Failed to toggle floor status', err);
+      throw err;
     }
   },
 }));

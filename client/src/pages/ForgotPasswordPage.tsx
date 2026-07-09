@@ -23,33 +23,35 @@ const strengthColors = ['#D1D5DB', '#EF4444', '#F59E0B', '#22C55E', '#10B981'];
 
 const inputBaseStyle: React.CSSProperties = {
   width: '100%',
-  padding: '10px 14px',
+  padding: '12px 14px',
   borderRadius: '10px',
-  border: '1px solid #D1D5DB',
+  border: '1px solid rgba(255, 255, 255, 0.15)',
   fontSize: '14px',
-  color: '#101828',
-  background: '#FFFFFF',
+  color: '#FFFFFF',
+  background: 'rgba(255, 255, 255, 0.05)',
   outline: 'none',
-  transition: 'border-color 150ms ease, box-shadow 150ms ease',
+  transition: 'all 150ms ease',
   boxSizing: 'border-box',
 };
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: '13px',
-  fontWeight: '500',
-  color: '#344054',
+  fontWeight: '600',
+  color: '#CBD5E1',
   marginBottom: '6px',
 };
 
 function handleInputFocus(e: React.FocusEvent<HTMLInputElement>) {
-  e.currentTarget.style.borderColor = '#1E3A5F';
-  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(30,58,95,0.1)';
+  e.currentTarget.style.borderColor = '#38BDF8';
+  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(56, 189, 248, 0.15)';
+  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
 }
 
 function handleInputBlur(e: React.FocusEvent<HTMLInputElement>) {
-  e.currentTarget.style.borderColor = '#D1D5DB';
+  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
   e.currentTarget.style.boxShadow = 'none';
+  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
 }
 
 export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
@@ -146,108 +148,44 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
 
   return (
     <div className="auth-page">
-      {/* ─── Left Branding Panel ─── */}
-      <div className="auth-brand-panel">
-        <div className="auth-shape auth-shape-1" />
-        <div className="auth-shape auth-shape-2" />
-        <div className="auth-shape auth-shape-3" />
-        <div className="auth-shape auth-shape-4" />
+      {/* Background Shapes */}
+      <div className="auth-bg-shape auth-bg-shape-1" />
+      <div className="auth-bg-shape auth-bg-shape-2" />
+      <div className="auth-bg-shape auth-bg-shape-3" />
+      <div className="auth-bg-shape auth-bg-shape-4" />
 
-        <div className="auth-brand-content">
-          <div className="auth-brand-logo">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="7" height="7" rx="1.5" fill="white" opacity="0.9"/>
-              <rect x="14" y="3" width="7" height="7" rx="1.5" fill="white" opacity="0.6"/>
-              <rect x="3" y="14" width="7" height="7" rx="1.5" fill="white" opacity="0.6"/>
-              <rect x="14" y="14" width="7" height="7" rx="1.5" fill="white" opacity="0.3"/>
-            </svg>
-          </div>
-
-          <h1 className="auth-brand-title">
-            {COMPANY_NAME}<br />
-            <span style={{ fontSize: '0.6em', fontWeight: 400, opacity: 0.7 }}>
-              {APP_NAME}
-            </span>
-          </h1>
-
-          <p className="auth-brand-subtitle">
-            Reset your password securely with a one-time verification code.
-          </p>
-
-          {/* Step indicator */}
-          <div style={{ marginTop: '48px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {stepTitles.map((title, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    background: step > idx + 1
-                      ? 'rgba(74, 222, 128, 0.3)'
-                      : step === idx + 1
-                        ? 'rgba(255,255,255,0.25)'
-                        : 'rgba(255,255,255,0.08)',
-                    color: 'white',
-                    border: step === idx + 1 ? '2px solid rgba(255,255,255,0.5)' : '2px solid transparent',
-                    transition: 'all 300ms ease',
-                  }}
-                >
-                  {step > idx + 1 ? <CheckCircle size={14} /> : idx + 1}
-                </div>
-                <span
-                  style={{
-                    fontSize: '14px',
-                    color: step >= idx + 1 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)',
-                    fontWeight: step === idx + 1 ? '600' : '400',
-                    transition: 'all 300ms ease',
-                  }}
-                >
-                  {title}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ─── Right Form Panel ─── */}
-      <div className="auth-form-panel">
+      {/* Glassmorphic Form Card */}
+      <div className="auth-glass-box">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            style={{ width: '100%', maxWidth: '400px' }}
+            style={{ width: '100%' }}
           >
             {/* Header */}
-            <div style={{ marginBottom: '32px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
-                  background: '#1E3A5F',
-                  borderRadius: '14px',
+                  background: '#FFFFFF',
+                  padding: '8px 16px',
+                  borderRadius: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  marginBottom: '20px',
-                  boxShadow: '0 4px 12px rgba(30, 58, 95, 0.2)',
+                  width: 'fit-content',
+                  margin: '0 auto 16px auto',
+                  boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
                 }}
               >
-                <StepIcon size={24} color="white" />
+                <img src="/logo.png" alt="Logo" style={{ height: '32px', objectFit: 'contain' }} />
               </div>
-              <h2 style={{ fontSize: '26px', fontWeight: '700', color: '#101828', letterSpacing: '-0.02em' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
                 {step === 1 ? 'Reset Password' : step === 2 ? 'Verify Code' : 'New Password'}
               </h2>
-              <p style={{ fontSize: '15px', color: '#667085', marginTop: '6px' }}>
+              <p style={{ fontSize: '14px', color: '#94A3B8', marginTop: '6px', fontWeight: '500', marginBottom: 0 }}>
                 {step === 1
                   ? 'Enter your email to receive a reset code'
                   : step === 2
@@ -256,19 +194,28 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
               </p>
             </div>
 
-            {/* Form Card */}
-            <motion.div
-              animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
-              transition={{ duration: 0.4 }}
-              style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid #E4E7EC',
-                borderRadius: '20px',
-                padding: '32px',
-                boxShadow: '0 4px 24px -4px rgba(16, 24, 40, 0.08)',
-              }}
-            >
+            {/* Step Indicators */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '24px' }}>
+              {stepTitles.map((title, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    height: '4px',
+                    width: '32px',
+                    borderRadius: '2px',
+                    background: step === idx + 1 
+                      ? '#38BDF8' 
+                      : step > idx + 1 
+                        ? '#10B981' 
+                        : 'rgba(255, 255, 255, 0.15)',
+                    transition: 'all 300ms ease',
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Form Fields Card */}
+            <div>
               {/* ── Step 1: Email ── */}
               {step === 1 && (
                 <form onSubmit={handleRequestCode}>
@@ -288,8 +235,8 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                   </div>
 
                   {error && (
-                    <div style={{ marginBottom: '20px', padding: '10px 12px', background: '#FFF1F2', borderRadius: '8px', border: '1px solid #FFE4E6' }}>
-                      <p style={{ fontSize: '13px', color: '#9B2335', margin: 0 }}>{error}</p>
+                    <div style={{ marginBottom: '20px', padding: '10px 12px', background: 'rgba(239, 68, 68, 0.15)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+                      <p style={{ fontSize: '13px', color: '#FCA5A5', margin: 0 }}>{error}</p>
                     </div>
                   )}
 
@@ -305,16 +252,21 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                       padding: '12px 20px',
                       borderRadius: '10px',
                       border: 'none',
-                      background: isSubmitting ? '#4A6FA5' : '#1E3A5F',
+                      background: isSubmitting ? '#0284C7' : 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)',
                       fontSize: '15px',
                       fontWeight: '600',
                       color: 'white',
                       cursor: isSubmitting ? 'wait' : 'pointer',
-                      transition: 'background 150ms ease, opacity 150ms ease',
+                      transition: 'all 150ms ease',
                       opacity: !email ? 0.6 : 1,
+                      boxShadow: '0 4px 12px rgba(56, 189, 248, 0.25)'
                     }}
-                    onMouseEnter={(e) => { if (!isSubmitting) e.currentTarget.style.background = '#172D4B'; }}
-                    onMouseLeave={(e) => { if (!isSubmitting) e.currentTarget.style.background = '#1E3A5F'; }}
+                    onMouseEnter={(e) => {
+                      if (!isSubmitting) e.currentTarget.style.background = 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSubmitting) e.currentTarget.style.background = 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)';
+                    }}
                   >
                     {isSubmitting ? 'Sending...' : 'Send Reset Code'}
                   </button>
@@ -351,8 +303,8 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                     </div>
 
                     {error && (
-                      <div style={{ marginBottom: '20px', padding: '10px 12px', background: '#FFF1F2', borderRadius: '8px', border: '1px solid #FFE4E6' }}>
-                        <p style={{ fontSize: '13px', color: '#9B2335', margin: 0 }}>{error}</p>
+                      <div style={{ marginBottom: '20px', padding: '10px 12px', background: 'rgba(239, 68, 68, 0.15)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+                        <p style={{ fontSize: '13px', color: '#FCA5A5', margin: 0 }}>{error}</p>
                       </div>
                     )}
 
@@ -368,27 +320,31 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                         padding: '12px 20px',
                         borderRadius: '10px',
                         border: 'none',
-                        background: '#1E3A5F',
+                        background: 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)',
                         fontSize: '15px',
                         fontWeight: '600',
                         color: 'white',
                         cursor: 'pointer',
-                        transition: 'background 150ms ease, opacity 150ms ease',
+                        transition: 'all 150ms ease',
                         opacity: otp.length !== 6 ? 0.6 : 1,
+                        boxShadow: '0 4px 12px rgba(56, 189, 248, 0.25)'
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = '#172D4B'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = '#1E3A5F'; }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)';
+                      }}
                     >
                       Continue
                     </button>
                   </form>
 
-
-                  <p style={{ textAlign: 'center', fontSize: '13px', color: '#667085', marginTop: '16px', marginBottom: 0 }}>
+                  <p style={{ textAlign: 'center', fontSize: '13px', color: '#94A3B8', marginTop: '16px', marginBottom: 0 }}>
                     Didn't receive a code?{' '}
                     <span
                       onClick={handleResendOtp}
-                      style={{ color: '#1E3A5F', fontWeight: '600', cursor: 'pointer' }}
+                      style={{ color: '#38BDF8', fontWeight: '600', cursor: 'pointer' }}
                     >
                       Resend
                     </span>
@@ -417,7 +373,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                         onClick={() => setShowPassword(!showPassword)}
                         style={{
                           position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                          background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#667085',
+                          background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#94A3B8',
                         }}
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -433,13 +389,13 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                             key={i}
                             style={{
                               flex: 1, height: '4px', borderRadius: '2px',
-                              background: i < strength.score ? strengthColors[strength.score] : '#E5E7EB',
+                              background: i < strength.score ? strengthColors[strength.score] : 'rgba(255,255,255,0.15)',
                               transition: 'background 200ms ease',
                             }}
                           />
                         ))}
                       </div>
-                      <span style={{ fontSize: '12px', color: strengthColors[strength.score], fontWeight: '500', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '12px', color: strengthColors[strength.score], fontWeight: '600', whiteSpace: 'nowrap' }}>
                         {strength.label}
                       </span>
                     </div>
@@ -462,7 +418,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                         onClick={() => setShowConfirm(!showConfirm)}
                         style={{
                           position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                          background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#667085',
+                          background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#94A3B8',
                         }}
                       >
                         {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -471,8 +427,8 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                   </div>
 
                   {error && (
-                    <div style={{ marginBottom: '20px', padding: '10px 12px', background: '#FFF1F2', borderRadius: '8px', border: '1px solid #FFE4E6' }}>
-                      <p style={{ fontSize: '13px', color: '#9B2335', margin: 0 }}>{error}</p>
+                    <div style={{ marginBottom: '20px', padding: '10px 12px', background: 'rgba(239, 68, 68, 0.15)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.25)' }}>
+                      <p style={{ fontSize: '13px', color: '#FCA5A5', margin: 0 }}>{error}</p>
                     </div>
                   )}
 
@@ -488,22 +444,27 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                       padding: '12px 20px',
                       borderRadius: '10px',
                       border: 'none',
-                      background: isSubmitting ? '#4A6FA5' : '#1E3A5F',
+                      background: isSubmitting ? '#0284C7' : 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)',
                       fontSize: '15px',
                       fontWeight: '600',
                       color: 'white',
                       cursor: isSubmitting ? 'wait' : 'pointer',
-                      transition: 'background 150ms ease, opacity 150ms ease',
+                      transition: 'all 150ms ease',
                       opacity: (!newPassword || !confirmPassword) ? 0.6 : 1,
+                      boxShadow: '0 4px 12px rgba(56, 189, 248, 0.25)'
                     }}
-                    onMouseEnter={(e) => { if (!isSubmitting) e.currentTarget.style.background = '#172D4B'; }}
-                    onMouseLeave={(e) => { if (!isSubmitting) e.currentTarget.style.background = '#1E3A5F'; }}
+                    onMouseEnter={(e) => {
+                      if (!isSubmitting) e.currentTarget.style.background = 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSubmitting) e.currentTarget.style.background = 'linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)';
+                    }}
                   >
                     {isSubmitting ? 'Resetting...' : 'Reset Password'}
                   </button>
                 </form>
               )}
-            </motion.div>
+            </div>
 
             {/* Footer link */}
             <div
@@ -511,7 +472,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
               style={{
                 textAlign: 'center',
                 fontSize: '13px',
-                color: '#667085',
+                color: '#94A3B8',
                 marginTop: '24px',
                 cursor: 'pointer',
                 display: 'flex',
@@ -521,7 +482,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
               }}
             >
               <ArrowLeft size={14} />
-              <span>Back to <span style={{ color: '#1E3A5F', fontWeight: '600' }}>Sign In</span></span>
+              <span>Back to <span style={{ color: '#38BDF8', fontWeight: '600' }}>Sign In</span></span>
             </div>
           </motion.div>
         </AnimatePresence>

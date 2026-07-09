@@ -9,7 +9,7 @@ import { ReservationModal } from '../components/ReservationModal';
 import { CancellationModal } from '../components/CancellationModal';
 import { useMyReservation } from '../hooks/useReservations';
 import { FloorTabs } from '../components/FloorTabs';
-import { ManagerPanel } from '../components/ManagerPanel';
+import { ManagerReleaseModal } from '../components/ManagerReleaseModal';
 import { ReservationHistory } from '../components/ReservationHistory';
 
 export function DashboardPage() {
@@ -31,12 +31,8 @@ export function DashboardPage() {
   }, [fetchFloors]);
 
   useEffect(() => {
-    if (selectedFloorId) {
-      fetchSlots(selectedFloorId);
-    } else {
-      fetchSlots(); // fetch all
-    }
-  }, [selectedFloorId, fetchSlots]);
+    fetchSlots(); // Always fetch all slots so that global statistics are correct
+  }, [fetchSlots]);
 
   useEffect(() => {
     if (tomorrowDate) {
@@ -44,12 +40,14 @@ export function DashboardPage() {
       fetchManagerReleases(tomorrowDate);
       
       const interval = setInterval(() => {
+        fetchSlots();
+        fetchFloors();
         fetchReservations(tomorrowDate);
         fetchManagerReleases(tomorrowDate);
       }, 30_000);
       return () => clearInterval(interval);
     }
-  }, [tomorrowDate, fetchReservations, fetchManagerReleases]);
+  }, [tomorrowDate, fetchReservations, fetchManagerReleases, fetchSlots, fetchFloors]);
 
   return (
     <>
@@ -123,8 +121,6 @@ export function DashboardPage() {
             </motion.div>
           )}
 
-          {user?.role === 'manager' && <ManagerPanel />}
-
           <CountdownCard />
 
           <div style={{ marginTop: '32px' }}>
@@ -138,6 +134,7 @@ export function DashboardPage() {
 
       <ReservationModal />
       <CancellationModal />
+      <ManagerReleaseModal />
     </>
   );
 }

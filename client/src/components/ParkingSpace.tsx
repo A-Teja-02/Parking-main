@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../store/useAuthStore';
 import type { SlotStatus } from '../types';
 
 interface CarIconProps {
@@ -44,8 +45,12 @@ export function ParkingSpace({
   onAvailableClick,
   onMySpotClick,
 }: ParkingSpaceProps) {
-  const { slot, state, reservation } = slotStatus;
-  const isClickable = state === 'available' || state === 'mine' || state === 'released_manager';
+  const { slot, state, reservation, manager_name } = slotStatus;
+  const { user } = useAuthStore();
+  const isMySlot = slot.reserved_for_manager_id === user?.id;
+  const isClickable = user?.role === 'manager'
+    ? isMySlot
+    : (state === 'available' || state === 'mine' || state === 'released_manager');
 
   const styles = {
     available: {
@@ -106,7 +111,11 @@ export function ParkingSpace({
     }
   };
 
-  const s = styles[state] || styles.unavailable;
+  const baseStyle = styles[state] || styles.unavailable;
+  const s = {
+    ...baseStyle,
+    cursor: (user?.role === 'manager' && !isMySlot) ? 'not-allowed' : baseStyle.cursor
+  };
   const isReserved = state === 'reserved_employee' || state === 'reserved_manager';
 
   return (
@@ -285,7 +294,9 @@ export function ParkingSpace({
         {(state === 'available' || state === 'released_manager') && 'Available'}
         {state === 'reserved_employee' && (
           <>
-            <div>Reserved</div>
+            <div style={{ fontWeight: '600', color: '#9B2335', fontSize: '11px', lineHeight: 1.3, textAlign: 'center' }}>
+              {reservation?.user_name || 'Reserved'}
+            </div>
             {reservation && (
               <div style={{ fontSize: '10px', color: '#9CA3AF', marginTop: '2px', fontFamily: 'monospace', letterSpacing: '0.03em' }}>
                 {reservation.vehicle_number}
@@ -293,7 +304,11 @@ export function ParkingSpace({
             )}
           </>
         )}
-        {state === 'reserved_manager' && 'Manager Reserved'}
+        {state === 'reserved_manager' && (
+          <div style={{ fontWeight: '600', color: '#92400E', fontSize: '11px', lineHeight: 1.3, textAlign: 'center' }}>
+            {manager_name || 'Manager'}
+          </div>
+        )}
         {state === 'mine' && (
           <>
             <div style={{ color: '#1E3A5F' }}>My Reservation</div>
@@ -308,7 +323,7 @@ export function ParkingSpace({
         {state === 'unavailable' && 'Unavailable'}
       </div>
 
-      {(state === 'available' || state === 'released_manager') && (
+      {(state === 'available' || state === 'released_manager') && isClickable && (
         <div style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: '#9CA3AF' }}>
           Click to reserve
         </div>

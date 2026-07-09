@@ -80,6 +80,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    updateProfile: (data: { name: string; department: string; vehicle_number: string }) =>
+      request<User>('/auth/profile', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
   },
   
   // ─── Parking APIs (UNTOUCHED) ─────────────────────────────────────────────
@@ -94,6 +99,7 @@ export const api = {
   
   floors: {
     list: () => request<Floor[]>('/floors'),
+    toggleStatus: (id: string, is_active: boolean) => request(`/floors/${id}/status`, { method: 'PATCH', body: JSON.stringify({ is_active }) }),
   },
   
   slots: {
@@ -105,6 +111,7 @@ export const api = {
     assignManager: (id: string, manager_id: string) => request(`/slots/${id}/assign-manager`, { method: 'POST', body: JSON.stringify({ manager_id }) }),
     removeManager: (id: string) => request(`/slots/${id}/assign-manager`, { method: 'DELETE' }),
     release: (id: string, data: any) => request<ManagerRelease>(`/slots/${id}/release`, { method: 'POST', body: JSON.stringify(data) }),
+    cancelRelease: (id: string, date: string) => request<void>(`/slots/${id}/release`, { method: 'DELETE', body: JSON.stringify({ date }) }),
     getReserved: () => request<any[]>('/slots/reserved'),
     getReleases: (date: string) => request<ManagerRelease[]>(`/manager-releases?date=${date}`)
   },

@@ -65,8 +65,9 @@ def create_user(db: Session, user_data: dict) -> User:
     parts = name.split()
     initials = "".join(p[0].upper() for p in parts[:2]) if parts else "??"
 
+    from services.auth_service import hash_password
     emp = Employee(
-        id=uuid.uuid4(),
+        id=str(uuid.uuid4()),
         employee_id=user_data.get("employee_id"),
         name=name,
         email=user_data["email"],
@@ -75,8 +76,8 @@ def create_user(db: Session, user_data: dict) -> User:
         avatar_initials=user_data.get("avatar_initials", initials),
         role=user_data.get("role", "employee"),
         is_active=True,
-        password_hash=None,  # No password until employee activates
-        account_status="inactive",
+        password_hash=hash_password("password"),
+        account_status="active",
         created_at=now,
         updated_at=now,
     )

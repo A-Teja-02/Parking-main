@@ -13,6 +13,12 @@ router = APIRouter(prefix="/api", tags=["slots"])
 def get_floors(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return parking_service.get_all_floors(db)
 
+@router.patch("/floors/{floor_id}/status")
+def set_floor_status(floor_id: str, data: dict, hr: User = Depends(get_hr_user), db: Session = Depends(get_db)):
+    if not parking_service.set_floor_status(db, floor_id, data.get("is_active", True)):
+        raise HTTPException(status_code=404, detail="Floor not found")
+    return {"status": "success"}
+
 @router.get("/slots", response_model=List[Slot])
 def get_slots(floor_id: Optional[str] = None, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return parking_service.get_slots_by_floor(db, floor_id)
@@ -67,8 +73,18 @@ def release_slot(slot_id: str, data: dict, user: User = Depends(get_current_user
         if user.role != "hr" and manager_id != user.id:
             raise HTTPException(status_code=403, detail="Cannot release another manager's slot")
             
-        release = parking_service.release_manager_slot(db, manager_id, slot_id, data.get("date"))
-        return release
+        start_date = data.get("start_date")
+        end_date = data.get("end_date")
+        
+        if start_date and end_date:
+            releases = parking_service.release_manager_slot_range(db, manager_id, slot_id, start_date, end_date)
+            return releases
+        else:
+            single_date = data.get("date")
+            if not single_date:
+                raise HTTPException(status_code=400, detail="Either 'date' or both 'start_date' and 'end_date' must be provided")
+            release = parking_service.release_manager_slot(db, manager_id, slot_id, single_date)
+            return release
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -81,3 +97,23 @@ def get_reserved_slots(user: User = Depends(get_current_user), db: Session = Dep
 @router.get("/manager-releases")
 def get_manager_releases(date: str, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return parking_service.get_manager_releases(db, date)
+
+@router.delete("/slots/{slot_id}/release")
+def cancel_release(slot_id: str, data: dict, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if user.role != "manager" and user.role != "hr":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    try:
+        manager_id = data.get("manager_id", user.id)
+        if user.role != "hr" and manager_id != user.id:
+            raise HTTPException(status_code=403, detail="Cannot cancel another manager's release")
+            
+        date = data.get("date")
+        if not date:
+            raise HTTPException(status_code=400, detail="Date must be provided")
+            
+        success = parking_service.cancel_manager_release(db, manager_id, slot_id, date)
+        if not success:
+            raise HTTPException(status_code=404, detail="Release not found")
+        return {"status": "success"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

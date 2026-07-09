@@ -5,6 +5,7 @@ import { useAdminStore } from '../store/useAdminStore';
 import { useParkingStore } from '../store/useParkingStore';
 import { EmployeeManagement } from '../components/EmployeeManagement';
 import { ParkingManagement } from '../components/ParkingManagement';
+import { ReservationManagement } from '../components/ReservationManagement';
 
 export function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'employees' | 'parking' | 'reservations'>('employees');
@@ -24,7 +25,7 @@ export function AdminDashboardPage() {
   const tabs = [
     { id: 'employees', label: 'Employees', icon: <Users size={18} /> },
     { id: 'parking', label: 'Parking Lots', icon: <LayoutGrid size={18} /> },
-    { id: 'reservations', label: 'Reservations (TBD)', icon: <CalendarRange size={18} /> },
+    { id: 'reservations', label: 'Reservations', icon: <CalendarRange size={18} /> },
   ];
 
   return (
@@ -54,6 +55,9 @@ export function AdminDashboardPage() {
           marginBottom: '24px',
           borderBottom: '1px solid #E4E7EC',
           paddingBottom: '16px',
+          overflowX: 'auto',
+          maxWidth: '100%',
+          whiteSpace: 'nowrap',
         }}
       >
         {tabs.map((tab) => (
@@ -89,11 +93,7 @@ export function AdminDashboardPage() {
       >
         {activeTab === 'employees' && <EmployeeManagement />}
         {activeTab === 'parking' && <ParkingManagement />}
-        {activeTab === 'reservations' && (
-          <div style={{ padding: '40px', textAlign: 'center', color: '#667085', background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E4E7EC' }}>
-            Reservation monitoring features coming soon.
-          </div>
-        )}
+        {activeTab === 'reservations' && <ReservationManagement />}
       </motion.div>
     </main>
   );

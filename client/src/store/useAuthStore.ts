@@ -12,6 +12,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  setUser: (user: User) => void;
 
   // Activation (first-time signup) — 3-step flow
   activateRequest: (email: string) => Promise<{ message: string }>;
@@ -62,6 +63,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user: null, token: null, isAuthenticated: false, role: null, isLoading: false });
     }
   },
+
+  setUser: (user) => set({ user, role: user.role }),
 
   // ─── Activation (First-Time Signup) ────────────────────────────
 

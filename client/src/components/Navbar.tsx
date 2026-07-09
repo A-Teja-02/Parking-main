@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { LogOut, ChevronDown, User, Building2 } from 'lucide-react';
+import { LogOut, ChevronDown, User, Building2, Key } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { useAppStore } from '../store/useAppStore';
 import { COMPANY_NAME, APP_NAME } from '../constants';
 
 export function Navbar() {
   const { user, logout } = useAuthStore();
+  const { setShowChangePasswordModal, setCurrentView } = useAppStore();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -45,8 +47,8 @@ export function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div
             style={{
-              width: '34px',
               height: '34px',
+              padding: '0 10px',
               background: '#1E3A5F',
               borderRadius: '8px',
               display: 'flex',
@@ -55,12 +57,7 @@ export function Navbar() {
               flexShrink: 0,
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="7" height="7" rx="1.5" fill="white" opacity="0.9"/>
-              <rect x="14" y="3" width="7" height="7" rx="1.5" fill="white" opacity="0.6"/>
-              <rect x="3" y="14" width="7" height="7" rx="1.5" fill="white" opacity="0.6"/>
-              <rect x="14" y="14" width="7" height="7" rx="1.5" fill="white" opacity="0.3"/>
-            </svg>
+            <img src="/logo.png" alt="Logo" style={{ height: '22px', objectFit: 'contain' }} />
           </div>
           <div>
             <span
@@ -225,6 +222,58 @@ export function Navbar() {
               </div>
 
               <div style={{ borderTop: '1px solid #F2F4F7', padding: '8px' }}>
+                <button
+                  onClick={() => {
+                    setProfileOpen(false);
+                    setCurrentView('profile');
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    borderRadius: '6px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: '#344054',
+                    transition: 'background 150ms ease',
+                    marginBottom: '4px',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F9FAFB')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                >
+                  <User size={14} color="#667085" />
+                  My Profile
+                </button>
+                <button
+                  onClick={() => {
+                    setProfileOpen(false);
+                    setShowChangePasswordModal(true);
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    borderRadius: '6px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    color: '#344054',
+                    transition: 'background 150ms ease',
+                    marginBottom: '4px',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F9FAFB')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                >
+                  <Key size={14} color="#667085" />
+                  Change Password
+                </button>
                 <button
                   id="logout-button"
                   onClick={() => {
