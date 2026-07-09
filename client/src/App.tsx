@@ -54,14 +54,8 @@ function App() {
   }
 
   if (!isAuthenticated) {
-    const handleNavigate = (view: 'login' | 'signup' | 'forgot-password') => {
-      if (view === 'signup') {
-        setAuthView('activate');
-      } else if (view === 'forgot-password') {
-        setAuthView('forgot-password');
-      } else {
-        setAuthView('login');
-      }
+    const handleNavigate = (view: AuthView) => {
+      setAuthView(view);
     };
 
     return (

@@ -6,7 +6,7 @@ import { LOGIN_TITLE, COMPANY_NAME, APP_NAME } from '../constants';
 import { useAppStore } from '../store/useAppStore';
 
 interface LoginPageProps {
-  onNavigate: (view: 'login' | 'signup' | 'forgot-password') => void;
+  onNavigate: (view: 'login' | 'forgot-password') => void;
 }
 
 export function LoginPage({ onNavigate }: LoginPageProps) {

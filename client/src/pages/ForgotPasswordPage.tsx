@@ -6,7 +6,7 @@ import { useAppStore } from '../store/useAppStore';
 import { COMPANY_NAME, APP_NAME } from '../constants';
 
 interface ForgotPasswordPageProps {
-  onNavigate: (view: 'login' | 'signup' | 'forgot-password') => void;
+  onNavigate: (view: 'login' | 'forgot-password') => void;
 }
 
 function getPasswordStrength(password: string): { score: number; label: string } {
