@@ -58,6 +58,7 @@ class User(BaseModel):
     email: str
     department: str
     vehicle_number: str
+    mobile_number: str = ""
     avatar_initials: str
     role: str
     is_active: bool

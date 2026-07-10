@@ -19,8 +19,8 @@ def get_tomorrow_date() -> str:
     return tomorrow.isoformat()
 
 def is_weekend() -> bool:
-    # Friday (4) and Saturday (5) are the disallowed reservation booking days
-    return date.today().weekday() in (4, 5)
+    # Booking is open 24/7 (Friday-Sunday books for Monday)
+    return False
 
 def get_reservations_by_date(db: Session, reservation_date: str) -> List[ReservationSchema]:
     reservations = db.query(Reservation).filter(

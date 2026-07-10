@@ -8,7 +8,7 @@ export function EmployeeManagement() {
   const { users, fetchUsers, isLoading } = useAdminStore();
   const { addToast } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', role: 'employee' });
+  const [formData, setFormData] = useState({ email: '', role: 'employee' });
 
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     try {
@@ -36,13 +36,14 @@ export function EmployeeManagement() {
     try {
       const data = {
         ...formData,
+        name: '', // default empty, entered by user in profile later
         department: '', // default empty, filled by user themselves later
-        avatar_initials: formData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+        avatar_initials: 'US' // default placeholder initials
       };
       await api.users.create(data);
       await fetchUsers();
       setShowAddForm(false);
-      setFormData({ name: '', email: '', role: 'employee' });
+      setFormData({ email: '', role: 'employee' });
       addToast({ type: 'success', message: 'User created successfully.' });
     } catch (err: any) {
       addToast({ type: 'error', message: err.message || 'Failed to create user.' });
@@ -70,7 +71,6 @@ export function EmployeeManagement() {
       {showAddForm && (
         <div style={{ padding: '24px', background: '#F9FAFB', borderBottom: '1px solid #E4E7EC' }}>
           <form onSubmit={handleAdd} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', maxWidth: '800px' }}>
-            <input required placeholder="Full Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }} />
             <input required type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }} />
 
             <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }}>

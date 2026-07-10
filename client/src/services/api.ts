@@ -80,7 +80,7 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-    updateProfile: (data: { name: string; department: string; vehicle_number: string }) =>
+    updateProfile: (data: { name: string; department: string; vehicle_number: string; mobile_number: string }) =>
       request<User>('/auth/profile', {
         method: 'PUT',
         body: JSON.stringify(data),

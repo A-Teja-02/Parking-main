@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { LogOut, ChevronDown, User, Building2, Key } from 'lucide-react';
+import { LogOut, ChevronDown, User, Building2, Key, Phone } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useAppStore } from '../store/useAppStore';
 import { COMPANY_NAME, APP_NAME } from '../constants';
@@ -123,7 +123,7 @@ export function Navbar() {
               {user.avatar_initials}
             </div>
             <span style={{ fontSize: '14px', fontWeight: '500', color: '#344054' }}>
-              {user.name.split(' ')[0]}
+              {user.name.split(' ')[0] || user.email.split('@')[0]}
             </span>
             <ChevronDown
               size={14}
@@ -180,7 +180,7 @@ export function Navbar() {
                   </div>
                   <div>
                     <p style={{ fontSize: '14px', fontWeight: '600', color: '#101828', lineHeight: '1.3' }}>
-                      {user.name}
+                      {user.name || 'Set Name'}
                     </p>
                     <p style={{ fontSize: '12px', color: '#667085', lineHeight: '1.3' }}>
                       {user.email}
@@ -191,34 +191,54 @@ export function Navbar() {
 
               {/* Info rows */}
               <div style={{ padding: '8px' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 10px',
-                    borderRadius: '6px',
-                    color: '#344054',
-                    fontSize: '13px',
-                  }}
-                >
-                  <Building2 size={14} color="#667085" />
-                  <span>{user.department}</span>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 10px',
-                    borderRadius: '6px',
-                    color: '#344054',
-                    fontSize: '13px',
-                  }}
-                >
-                  <User size={14} color="#667085" />
-                  <span style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>{user.vehicle_number}</span>
-                </div>
+                {user.department && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 10px',
+                      borderRadius: '6px',
+                      color: '#344054',
+                      fontSize: '13px',
+                    }}
+                  >
+                    <Building2 size={14} color="#667085" />
+                    <span>{user.department}</span>
+                  </div>
+                )}
+                {user.vehicle_number && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 10px',
+                      borderRadius: '6px',
+                      color: '#344054',
+                      fontSize: '13px',
+                    }}
+                  >
+                    <User size={14} color="#667085" />
+                    <span style={{ fontFamily: 'monospace', letterSpacing: '0.05em' }}>{user.vehicle_number}</span>
+                  </div>
+                )}
+                {user.mobile_number && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 10px',
+                      borderRadius: '6px',
+                      color: '#344054',
+                      fontSize: '13px',
+                    }}
+                  >
+                    <Phone size={14} color="#667085" />
+                    <span>{user.mobile_number}</span>
+                  </div>
+                )}
               </div>
 
               <div style={{ borderTop: '1px solid #F2F4F7', padding: '8px' }}>

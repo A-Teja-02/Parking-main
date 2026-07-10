@@ -19,6 +19,7 @@ def _employee_to_user(emp: Employee) -> User:
         email=emp.email,
         department=emp.department,
         vehicle_number=emp.vehicle_number,
+        mobile_number=emp.mobile_number,
         avatar_initials=emp.avatar_initials,
         role=emp.role,
         is_active=emp.is_active,
@@ -95,7 +96,7 @@ def update_user(db: Session, user_id: str, update_data: dict) -> Optional[User]:
     if not emp:
         return None
 
-    allowed_fields = {"name", "email", "department", "vehicle_number", "avatar_initials", "role", "employee_id"}
+    allowed_fields = {"name", "email", "department", "vehicle_number", "mobile_number", "avatar_initials", "role", "employee_id"}
     for key, value in update_data.items():
         if key in allowed_fields:
             setattr(emp, key, value)

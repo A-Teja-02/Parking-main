@@ -148,6 +148,7 @@ def update_profile(
         
     department = data.get("department", user.department).strip()
     vehicle_number = data.get("vehicle_number", user.vehicle_number).strip().upper()
+    mobile_number = data.get("mobile_number", user.mobile_number).strip()
     
     # Calculate avatar initials
     words = [w for w in name.split() if w]
@@ -159,6 +160,7 @@ def update_profile(
         "name": name,
         "department": department,
         "vehicle_number": vehicle_number,
+        "mobile_number": mobile_number,
         "avatar_initials": initials
     }
     

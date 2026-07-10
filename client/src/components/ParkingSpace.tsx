@@ -127,14 +127,14 @@ export function ParkingSpace({
         background: s.background,
         border: s.border,
         borderRadius: '12px',
-        padding: '24px 16px',
+        padding: '18px 14px',
         cursor: s.cursor,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '12px',
-        minHeight: '190px',
-        justifyContent: 'space-between',
+        gap: '14px',
+        minHeight: '130px',
+        justifyContent: 'center',
         transition: 'box-shadow 200ms ease, transform 200ms ease',
         boxShadow: state === 'mine'
           ? '0 0 0 3px rgba(30, 58, 95, 0.12), 0 4px 8px rgba(30, 58, 95, 0.08)'
@@ -144,8 +144,8 @@ export function ParkingSpace({
       whileHover={
         isClickable
           ? { y: -3, boxShadow: state === 'mine'
-              ? '0 0 0 3px rgba(30, 58, 95, 0.15), 0 8px 16px rgba(30, 58, 95, 0.12)'
-              : '0 6px 16px rgba(16,24,40,0.12)'
+               ? '0 0 0 3px rgba(30, 58, 95, 0.15), 0 8px 16px rgba(30, 58, 95, 0.12)'
+               : '0 6px 16px rgba(16,24,40,0.12)'
             }
           : {}
       }
@@ -212,119 +212,54 @@ export function ParkingSpace({
         {slot.label}
       </div>
 
-      <div style={{ height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <AnimatePresence mode="wait">
-          {isReserved && !isAnimating && (
-            <motion.div
-              key="reserved-car"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 30 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <CarIcon color={state === 'reserved_manager' ? '#F59E0B' : '#9B2335'} size={48} />
-            </motion.div>
-          )}
-
-          {state === 'mine' && !isAnimating && (
-            <motion.div
-              key="mine-car"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 30 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <CarIcon color="#1E3A5F" size={52} />
-            </motion.div>
-          )}
-
-          {isAnimating && state !== 'available' && state !== 'released_manager' && (
-            <motion.div
-              key="parking-car"
-              initial={{ x: 80, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <CarIcon color="#1E3A5F" size={52} />
-            </motion.div>
-          )}
-
-          {isAnimating && (state === 'available' || state === 'released_manager') && (
-            <motion.div
-              key="leaving-car"
-              initial={{ x: 0, opacity: 1 }}
-              animate={{ x: -80, opacity: 0 }}
-              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <CarIcon color="#2D6A4F" size={48} />
-            </motion.div>
-          )}
-
-          {(state === 'available' || state === 'released_manager') && !isAnimating && (
-            <motion.div
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
-            >
-              <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
-                <rect
-                  x="2" y="2" width="36" height="24" rx="4"
-                  stroke="#2D6A4F" strokeWidth="1.5" strokeDasharray="4 3"
-                  fill="none" opacity="0.4"
-                />
-                <text x="20" y="17" textAnchor="middle" fontSize="9" fill="#2D6A4F" opacity="0.5" fontWeight="500">
-                  OPEN
-                </text>
-              </svg>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
       <div
         style={{
-          fontSize: '12px',
-          fontWeight: '500',
-          color: s.labelColor,
-          letterSpacing: '0.02em',
+          width: '100%',
           textAlign: 'center'
         }}
       >
-        {(state === 'available' || state === 'released_manager') && 'Available'}
+        {(state === 'available' || state === 'released_manager') && (
+          <div style={{ fontSize: '14px', fontWeight: '600', color: '#2D6A4F' }}>Available</div>
+        )}
         {state === 'reserved_employee' && (
           <>
-            <div style={{ fontWeight: '600', color: '#9B2335', fontSize: '11px', lineHeight: 1.3, textAlign: 'center' }}>
+            <div style={{ fontWeight: '700', color: '#9B2335', fontSize: '15px', lineHeight: 1.3 }}>
               {reservation?.user_name || 'Reserved'}
             </div>
             {reservation && (
-              <div style={{ fontSize: '10px', color: '#9CA3AF', marginTop: '2px', fontFamily: 'monospace', letterSpacing: '0.03em' }}>
+              <div style={{ fontSize: '11px', color: '#667085', marginTop: '4px', fontFamily: 'monospace', letterSpacing: '0.02em' }}>
                 {reservation.vehicle_number}
               </div>
             )}
           </>
         )}
         {state === 'reserved_manager' && (
-          <div style={{ fontWeight: '600', color: '#92400E', fontSize: '11px', lineHeight: 1.3, textAlign: 'center' }}>
+          <div style={{ fontWeight: '700', color: '#92400E', fontSize: '15px', lineHeight: 1.3 }}>
             {manager_name || 'Manager'}
           </div>
         )}
         {state === 'mine' && (
           <>
-            <div style={{ color: '#1E3A5F' }}>My Reservation</div>
+            <div style={{ fontWeight: '700', color: '#1E3A5F', fontSize: '15px', lineHeight: 1.3 }}>
+              {reservation?.user_name || user?.name || 'My Reservation'}
+            </div>
             {reservation && (
-              <div style={{ fontSize: '10px', color: '#6B7280', marginTop: '2px', fontFamily: 'monospace', letterSpacing: '0.03em' }}>
+              <div style={{ fontSize: '11px', color: '#4A6FA5', marginTop: '4px', fontFamily: 'monospace', letterSpacing: '0.02em' }}>
                 {reservation.vehicle_number}
               </div>
             )}
           </>
         )}
-        {state === 'maintenance' && 'Maintenance'}
-        {state === 'unavailable' && 'Unavailable'}
+        {state === 'maintenance' && (
+          <div style={{ fontSize: '14px', fontWeight: '600', color: '#9CA3AF' }}>Maintenance</div>
+        )}
+        {state === 'unavailable' && (
+          <div style={{ fontSize: '14px', fontWeight: '600', color: '#6B7280' }}>Unavailable</div>
+        )}
       </div>
 
       {(state === 'available' || state === 'released_manager') && isClickable && (
-        <div style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: '#9CA3AF' }}>
+        <div style={{ position: 'absolute', bottom: '6px', right: '8px', fontSize: '9px', color: '#9CA3AF' }}>
           Click to reserve
         </div>
       )}

@@ -7,6 +7,7 @@ export interface User {
   email: string;
   department: string;
   vehicle_number: string;
+  mobile_number: string;
   avatar_initials: string;
   role: UserRole;
   is_active: boolean;

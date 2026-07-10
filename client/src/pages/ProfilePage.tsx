@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useAppStore } from '../store/useAppStore';
 import { api } from '../services/api';
-import { ArrowLeft, User as UserIcon, Building2, Car, Mail, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Building2, Car, Mail, CheckCircle2, Phone } from 'lucide-react';
 
 export function ProfilePage() {
   const { user, setUser } = useAuthStore();
@@ -13,6 +13,7 @@ export function ProfilePage() {
   const [name, setName] = useState(user.name);
   const [department, setDepartment] = useState(user.department || '');
   const [vehicleNumber, setVehicleNumber] = useState(user.vehicle_number || '');
+  const [mobileNumber, setMobileNumber] = useState(user.mobile_number || '');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -28,6 +29,7 @@ export function ProfilePage() {
         name: name.trim(),
         department: department.trim(),
         vehicle_number: vehicleNumber.trim().toUpperCase(),
+        mobile_number: mobileNumber.trim(),
       });
       setUser(updatedUser);
       addToast({ type: 'success', message: 'Profile updated successfully!' });
@@ -288,6 +290,50 @@ export function ProfilePage() {
                   fontSize: '14px',
                   fontFamily: 'monospace',
                   letterSpacing: '0.05em',
+                  color: '#101828',
+                  background: '#FFFFFF',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                  transition: 'border-color 150ms ease, box-shadow 150ms ease'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#1E3A5F';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(30,58,95,0.1)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#D1D5DB';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              />
+            </div>
+
+            {/* Mobile Number */}
+            <div>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#344054',
+                  marginBottom: '6px'
+                }}
+              >
+                <Phone size={14} color="#667085" />
+                Mobile Number
+              </label>
+              <input
+                type="tel"
+                placeholder="e.g. +91 98765 43210"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  border: '1px solid #D1D5DB',
+                  fontSize: '14px',
                   color: '#101828',
                   background: '#FFFFFF',
                   outline: 'none',

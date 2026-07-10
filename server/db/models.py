@@ -34,6 +34,7 @@ class Employee(Base):
     role = Column(String(20), nullable=False, default="employee")  # employee, manager, hr
     department = Column(String(100), nullable=False, default="")
     vehicle_number = Column(String(50), nullable=False, default="")
+    mobile_number = Column(String(20), nullable=False, default="")
     avatar_initials = Column(String(5), nullable=False, default="")
     account_status = Column(String(20), nullable=False, default="inactive")  # inactive, active
     is_active = Column(Boolean, nullable=False, default=True)  # HR can deactivate
