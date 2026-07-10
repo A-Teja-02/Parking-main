@@ -12,7 +12,10 @@ interface ParkingState {
   selectedFloorId: string | null;
   isLoading: boolean;
   tomorrowDate: string;
+  todayDate: string;
+  selectedDate: string;
   isWeekend: boolean;
+  todayAvailability: { available: number; total: number } | null;
   
   fetchFloors: () => Promise<void>;
   fetchSlots: (floorId?: string) => Promise<void>;
@@ -25,7 +28,16 @@ interface ParkingState {
   createReservation: (slotId: string, vehicleNumber: string) => Promise<void>;
   cancelReservation: (id: string) => Promise<void>;
   toggleFloorStatus: (id: string, is_active: boolean) => Promise<void>;
+  setSelectedDate: (date: string) => void;
+  fetchTodayAvailability: () => Promise<void>;
 }
+
+const getLocalDateString = (d: Date = new Date()) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export const useParkingStore = create<ParkingState>((set, get) => ({
   floors: [],
@@ -36,7 +48,10 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
   selectedFloorId: null,
   isLoading: false,
   tomorrowDate: '',
+  todayDate: '',
+  selectedDate: '',
   isWeekend: false,
+  todayAvailability: null,
 
   fetchFloors: async () => {
     try {
@@ -85,7 +100,13 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
   fetchStatus: async () => {
     try {
       const status = await api.status.getSlotStatus();
-      set({ tomorrowDate: status.tomorrow, isWeekend: status.is_weekend });
+      const todayStr = getLocalDateString();
+      set({ 
+        tomorrowDate: status.tomorrow, 
+        todayDate: todayStr,
+        selectedDate: get().selectedDate || status.tomorrow,
+        isWeekend: status.is_weekend 
+      });
     } catch (err) {
       console.error('Failed to fetch status', err);
     }
@@ -107,14 +128,14 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
     set({ isLoading: true });
     try {
       const { user } = useAuthStore.getState();
-      const { tomorrowDate } = get();
+      const { selectedDate } = get();
       if (!user) throw new Error('Not authenticated');
       const newRes = await api.reservations.create({
         user_id: user.id,
         user_name: user.name,
         slot_id: slotId,
         vehicle_number: vehicleNumber,
-        date: tomorrowDate,
+        date: selectedDate,
       });
       set((state) => ({ reservations: [...state.reservations, newRes] }));
     } catch (err) {
@@ -149,6 +170,42 @@ export const useParkingStore = create<ParkingState>((set, get) => ({
     } catch (err) {
       console.error('Failed to toggle floor status', err);
       throw err;
+    }
+  },
+
+  setSelectedDate: (date) => set({ selectedDate: date }),
+
+  fetchTodayAvailability: async () => {
+    try {
+      const todayStr = getLocalDateString();
+      const [todayReservations, todayReleases, floors, slots] = await Promise.all([
+        api.reservations.list(todayStr),
+        api.slots.getReleases(todayStr),
+        api.floors.list(),
+        api.slots.list()
+      ]);
+      
+      const activeFloorIds = new Set(floors.filter(f => f.is_active !== false).map(f => f.id));
+      const activeSlots = slots.filter(s => s.status === 'active' && activeFloorIds.has(s.floor_id));
+      const total = activeSlots.length;
+      
+      const employeeReserved = todayReservations.filter(r => {
+        const slot = slots.find(s => s.id === r.slot_id);
+        return slot && slot.status === 'active' && activeFloorIds.has(slot.floor_id);
+      }).length;
+      
+      const unreleasedManagers = activeSlots.filter(s => {
+        if (!s.reserved_for_manager_id) return false;
+        const isReleased = todayReleases.some(r => r.slot_id === s.id && r.release_date === todayStr);
+        return !isReleased;
+      }).length;
+      
+      const reserved = employeeReserved + unreleasedManagers;
+      const available = Math.max(0, total - reserved);
+      
+      set({ todayAvailability: { available, total } });
+    } catch (err) {
+      console.error('Failed to fetch today availability', err);
     }
   },
 }));

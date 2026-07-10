@@ -33,8 +33,8 @@ export function Navbar() {
       }}
     >
       <div
+        className="app-container"
         style={{
-          maxWidth: '1280px',
           margin: '0 auto',
           padding: '0 24px',
           height: '64px',
@@ -45,20 +45,7 @@ export function Navbar() {
       >
         {/* Logo + Title */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div
-            style={{
-              height: '34px',
-              padding: '0 10px',
-              background: '#1E3A5F',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <img src="/logo.png" alt="Logo" style={{ height: '22px', objectFit: 'contain' }} />
-          </div>
+          <img src="/logo.png" alt="Logo" style={{ height: '32px', objectFit: 'contain', flexShrink: 0 }} />
           <div>
             <span
               style={{

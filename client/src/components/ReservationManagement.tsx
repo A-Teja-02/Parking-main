@@ -34,7 +34,7 @@ export function ReservationManagement() {
   
   // Filter for employee reservations only
   const filteredReservations = allReservations
-    .filter(r => employeeIds.has(r.user_id))
+    .filter(r => employeeIds.has(r.user_id) && r.status === 'active')
     .filter(r => {
       const matchSearch = 
         r.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || 

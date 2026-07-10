@@ -152,7 +152,7 @@ export function ParkingSpace({
       whileTap={isClickable ? { scale: 0.98 } : {}}
       transition={{ duration: 0.2 }}
     >
-      {state === 'mine' && (
+      {(state === 'mine' || isMySlot) && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -161,7 +161,7 @@ export function ParkingSpace({
             top: '-10px',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: '#1E3A5F',
+            background: isMySlot && state !== 'mine' ? '#4A6FA5' : '#1E3A5F',
             color: 'white',
             fontSize: '10px',
             fontWeight: '600',
@@ -169,9 +169,10 @@ export function ParkingSpace({
             padding: '3px 10px',
             borderRadius: '20px',
             whiteSpace: 'nowrap',
+            zIndex: 2,
           }}
         >
-          YOUR SPOT
+          {isMySlot && state === 'released_manager' ? 'YOUR SPOT (RELEASED)' : isMySlot && state === 'reserved_employee' ? 'YOUR SPOT (BOOKED)' : 'YOUR SPOT'}
         </motion.div>
       )}
       

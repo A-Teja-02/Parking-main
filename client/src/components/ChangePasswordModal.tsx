@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Eye, EyeOff, X } from 'lucide-react';
+import { Lock, Eye, EyeOff, X, Check } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useAppStore } from '../store/useAppStore';
 
@@ -52,7 +52,7 @@ const toggleButtonStyle: React.CSSProperties = {
 };
 
 export function ChangePasswordModal() {
-  const { changePassword } = useAuthStore();
+  const { changePassword, user } = useAuthStore();
   const { showChangePasswordModal, setShowChangePasswordModal, addToast } = useAppStore();
 
   const [currentPassword, setCurrentPassword] = useState('');
@@ -92,14 +92,17 @@ export function ChangePasswordModal() {
     if (newPassword.length < 8) {
       return 'New password must be at least 8 characters.';
     }
-    if (!/[A-Z]/.test(newPassword)) {
-      return 'New password must contain at least one uppercase letter.';
+    if (!/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword)) {
+      return 'New password must contain both lowercase (a-z) and uppercase (A-Z) letters.';
     }
-    if (!/[a-z]/.test(newPassword)) {
-      return 'New password must contain at least one lowercase letter.';
+    if (!/\d/.test(newPassword) && !/[^a-zA-Z0-9]/.test(newPassword)) {
+      return 'New password must contain at least one number (0-9) or symbol.';
     }
-    if (!/\d/.test(newPassword)) {
-      return 'New password must contain at least one digit.';
+    if (user && newPassword.toLowerCase().includes(user.email.toLowerCase())) {
+      return 'New password must not contain your email address.';
+    }
+    if (['123456', '12345678', 'password', 'qwerty', 'admin123', 'quadrant'].includes(newPassword.toLowerCase())) {
+      return 'New password is too common or easily guessed.';
     }
     if (newPassword !== confirmPassword) {
       return 'New password and confirmation do not match.';
@@ -138,6 +141,29 @@ export function ChangePasswordModal() {
   const strength = getPasswordStrength(newPassword);
   const colors = strengthColors[strength];
   const label = strengthLabels[strength];
+
+  const constraints = [
+    {
+      label: 'contains at least 8 characters',
+      isMet: newPassword.length >= 8,
+    },
+    {
+      label: 'contains both lower (a-z) and upper case letters (A-Z)',
+      isMet: /[a-z]/.test(newPassword) && /[A-Z]/.test(newPassword),
+    },
+    {
+      label: 'contains at least one number (0-9) or a symbol',
+      isMet: /\d/.test(newPassword) || /[^a-zA-Z0-9]/.test(newPassword),
+    },
+    {
+      label: 'does not contain your email address',
+      isMet: !user || !newPassword.toLowerCase().includes(user.email.toLowerCase()),
+    },
+    {
+      label: 'is not commonly used',
+      isMet: !['123456', '12345678', 'password', 'qwerty', 'admin123', 'quadrant'].includes(newPassword.toLowerCase()),
+    },
+  ];
 
   const getFocusStyle = (field: string): React.CSSProperties =>
     focusedField === field
@@ -346,6 +372,43 @@ export function ChangePasswordModal() {
                       </div>
                     </div>
                   )}
+
+                  {/* Password Constraints List */}
+                  <div
+                    style={{
+                      marginTop: '12px',
+                      background: '#FFFDFD',
+                      border: '1px solid #FEE2E2',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                    }}
+                  >
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                      Create a password that:
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {constraints.map((c, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '12px',
+                            color: c.isMet ? '#059669' : '#DC2626',
+                            transition: 'color 150ms ease',
+                          }}
+                        >
+                          {c.isMet ? (
+                            <Check size={14} style={{ color: '#059669', flexShrink: 0 }} />
+                          ) : (
+                            <X size={14} style={{ color: '#DC2626', flexShrink: 0 }} />
+                          )}
+                          <span>{c.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Confirm New Password */}

@@ -85,22 +85,29 @@ export function ManagerReleaseModal() {
             }}
           />
 
-          {/* Modal Box */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+          {/* Modal Wrapper to Center */}
+          <div
             style={{
               position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               zIndex: 101,
-              width: '100%',
-              maxWidth: '440px',
               padding: '0 16px',
+              pointerEvents: 'none',
             }}
           >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              style={{
+                width: '100%',
+                maxWidth: '440px',
+                pointerEvents: 'auto',
+              }}
+            >
             <div style={{ background: '#FFFFFF', borderRadius: '20px', boxShadow: '0 24px 48px -12px rgba(16,24,40,0.25)', overflow: 'hidden' }}>
               {/* Header */}
               <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #2D5491 100%)', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#FFFFFF' }}>
@@ -259,6 +266,7 @@ export function ManagerReleaseModal() {
               </div>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

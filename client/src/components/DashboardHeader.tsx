@@ -4,14 +4,15 @@ import { useAvailabilityCount } from '../hooks/useReservations';
 import { formatDisplayDate } from '../utils/date';
 
 export function DashboardHeader() {
-  const { tomorrowDate } = useParkingStore();
+  const { selectedDate, todayDate } = useParkingStore();
   const { available, total } = useAvailabilityCount();
-  const displayDate = formatDisplayDate(tomorrowDate);
+  const displayDate = formatDisplayDate(selectedDate);
   const isFullyBooked = available === 0;
+  const isToday = selectedDate === todayDate;
 
   return (
     <div style={{ marginBottom: '32px' }}>
-      {/* Tomorrow label */}
+      {/* Date label */}
       <div
         style={{
           display: 'inline-flex',
@@ -19,14 +20,14 @@ export function DashboardHeader() {
           gap: '6px',
           padding: '4px 12px',
           borderRadius: '20px',
-          background: '#EEF2FF',
-          border: '1px solid #C7D2FE',
+          background: isToday ? '#ECFDF5' : '#EEF2FF',
+          border: `1px solid ${isToday ? '#A7F3D0' : '#C7D2FE'}`,
           marginBottom: '12px',
         }}
       >
-        <Calendar size={12} color="#4A6FA5" />
-        <span style={{ fontSize: '12px', fontWeight: '500', color: '#4A6FA5', letterSpacing: '0.02em' }}>
-          TOMORROW
+        <Calendar size={12} color={isToday ? '#059669' : '#4A6FA5'} />
+        <span style={{ fontSize: '12px', fontWeight: '500', color: isToday ? '#059669' : '#4A6FA5', letterSpacing: '0.02em' }}>
+          {isToday ? 'TODAY' : 'TOMORROW'}
         </span>
       </div>
 

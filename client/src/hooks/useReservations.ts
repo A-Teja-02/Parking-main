@@ -4,11 +4,11 @@ import type { SlotStatus, SlotState } from '../types';
 
 export function useSlotStatus(): SlotStatus[] {
   const { user } = useAuthStore();
-  const { slots, reservations, managerReleases, tomorrowDate, users } = useParkingStore();
+  const { slots, reservations, managerReleases, selectedDate, users } = useParkingStore();
 
   return slots.map((slot) => {
     const reservation = reservations.find((r) => r.slot_id === slot.id);
-    const release = managerReleases.find((r) => r.slot_id === slot.id && r.release_date === tomorrowDate);
+    const release = managerReleases.find((r) => r.slot_id === slot.id && r.release_date === selectedDate);
     
     let state: SlotState = 'available';
 
@@ -31,7 +31,9 @@ export function useSlotStatus(): SlotStatus[] {
       state, 
       reservation,
       manager_id: slot.reserved_for_manager_id || undefined,
-      manager_name: slot.reserved_for_manager_name || undefined,
+      manager_name: slot.reserved_for_manager_id
+        ? users.find((u) => u.id === slot.reserved_for_manager_id)?.name
+        : undefined,
     };
   });
 }
@@ -43,7 +45,7 @@ export function useMyReservation() {
 }
 
 export function useAvailabilityCount() {
-  const { slots, reservations, managerReleases, tomorrowDate, floors } = useParkingStore();
+  const { slots, reservations, managerReleases, selectedDate, floors } = useParkingStore();
   
   // Get active floor IDs
   const activeFloorIds = new Set(floors.filter(f => f.is_active !== false).map(f => f.id));
@@ -62,7 +64,7 @@ export function useAvailabilityCount() {
   // 2. All unreleased manager slots on active floors (since they cannot be booked by others)
   const unreleasedManagers = activeSlots.filter(s => {
     if (!s.reserved_for_manager_id) return false;
-    const isReleased = managerReleases.some(r => r.slot_id === s.id && r.release_date === tomorrowDate);
+    const isReleased = managerReleases.some(r => r.slot_id === s.id && r.release_date === selectedDate);
     return !isReleased;
   }).length;
 

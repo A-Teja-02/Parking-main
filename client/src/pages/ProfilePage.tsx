@@ -33,6 +33,7 @@ export function ProfilePage() {
       });
       setUser(updatedUser);
       addToast({ type: 'success', message: 'Profile updated successfully!' });
+      setCurrentView('dashboard');
     } catch (err: any) {
       addToast({ type: 'error', message: err.message || 'Failed to update profile.' });
     } finally {

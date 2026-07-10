@@ -15,7 +15,7 @@ export function ReservationModal() {
   } = useAppStore();
 
   const { user } = useAuthStore();
-  const { tomorrowDate, createReservation, isLoading } = useParkingStore();
+  const { selectedDate, createReservation, isLoading } = useParkingStore();
 
   if (!user) return null;
 
@@ -63,24 +63,31 @@ export function ReservationModal() {
             }}
           />
 
-          {/* Modal */}
-          <motion.div
-            key="modal"
-            initial={{ opacity: 0, scale: 0.96, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 10 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          {/* Modal Wrapper to Center */}
+          <div
             style={{
               position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               zIndex: 101,
-              width: '100%',
-              maxWidth: '440px',
               padding: '0 16px',
+              pointerEvents: 'none',
             }}
           >
+            <motion.div
+              key="modal"
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                width: '100%',
+                maxWidth: '440px',
+                pointerEvents: 'auto',
+              }}
+            >
             <div
               style={{
                 background: '#FFFFFF',
@@ -153,7 +160,7 @@ export function ReservationModal() {
                     {
                       icon: <Calendar size={15} color="#4A6FA5" />,
                       label: 'Date',
-                      value: formatDisplayDate(tomorrowDate),
+                      value: formatDisplayDate(selectedDate),
                     },
                     {
                       icon: <MapPin size={15} color="#4A6FA5" />,
@@ -304,6 +311,7 @@ export function ReservationModal() {
               </div>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

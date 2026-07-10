@@ -65,15 +65,16 @@ def get_reservation_by_user_and_date(db: Session, user_id: str, reservation_date
 
 def create_reservation(db: Session, data: ReservationCreate, override_role: str = None) -> ReservationSchema:
     tomorrow = get_tomorrow_date()
+    today = date.today().isoformat()
     
-    # If not HR, enforce tomorrow rule and no weekends
+    # If not HR, enforce today/tomorrow rule and no weekends
     if override_role != "hr":
         if is_weekend():
             raise ValueError("Reservations are only allowed from Sunday to Thursday.")
-        if data.date != tomorrow:
-            raise ValueError("Reservations can only be made for tomorrow.")
-        tomorrow_dt = date.fromisoformat(tomorrow)
-        if tomorrow_dt.weekday() in (5, 6):
+        if data.date not in (tomorrow, today):
+            raise ValueError("Reservations can only be made for today or tomorrow.")
+        data_dt = date.fromisoformat(data.date)
+        if data_dt.weekday() in (5, 6):
             raise ValueError("No reservations on weekends.")
             
         existing = get_reservation_by_user_and_date(db, data.user_id, data.date)
@@ -174,7 +175,7 @@ def get_user_history(db: Session, user_id: str) -> List[ReservationSchema]:
     ]
 
 def get_all_reservations(db: Session) -> List[ReservationSchema]:
-    reservations = db.query(Reservation).all()
+    reservations = db.query(Reservation).filter(Reservation.status == "active").all()
     return [
         ReservationSchema(
             id=r.id,
@@ -188,3 +189,4 @@ def get_all_reservations(db: Session) -> List[ReservationSchema]:
             status=r.status
         ) for r in reservations
     ]
+

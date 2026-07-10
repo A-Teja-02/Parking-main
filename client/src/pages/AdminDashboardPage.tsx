@@ -30,10 +30,9 @@ export function AdminDashboardPage() {
 
   return (
     <main
+      className="app-container"
       style={{
         flex: 1,
-        maxWidth: '1280px',
-        width: '100%',
         margin: '0 auto',
         padding: '40px 24px 60px',
       }}
