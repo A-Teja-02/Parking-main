@@ -9,7 +9,7 @@ interface AdminState {
   isLoading: boolean;
   
   fetchUsers: () => Promise<void>;
-  fetchAllReservations: (date?: string) => Promise<void>;
+  fetchAllReservations: (date?: string, background?: boolean) => Promise<void>;
   fetchReservedSlots: () => Promise<void>;
   setIsLoading: (loading: boolean) => void;
 }
@@ -32,15 +32,15 @@ export const useAdminStore = create<AdminState>((set) => ({
     }
   },
 
-  fetchAllReservations: async (date?: string) => {
-    set({ isLoading: true });
+  fetchAllReservations: async (date?: string, background?: boolean) => {
+    if (!background) set({ isLoading: true });
     try {
       const allReservations = await api.reservations.list(date);
       set({ allReservations });
     } catch (err) {
       console.error('Failed to fetch all reservations', err);
     } finally {
-      set({ isLoading: false });
+      if (!background) set({ isLoading: false });
     }
   },
 

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAdminStore } from '../store/useAdminStore';
 import { useAppStore } from '../store/useAppStore';
 import { Search, Calendar, ShieldAlert, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatDisplayDate } from '../utils/date';
 
 export function ReservationManagement() {
-  const { allReservations, users } = useAdminStore();
+  const { allReservations, users, fetchAllReservations } = useAdminStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   const getTodayDateString = () => {
@@ -17,6 +17,18 @@ export function ReservationManagement() {
   };
 
   const [dateFilter, setDateFilter] = useState(getTodayDateString());
+
+  useEffect(() => {
+    // Initial fetch on mount or date change (shows loading spinner if applicable)
+    fetchAllReservations(dateFilter || undefined, false);
+
+    // Setup background polling every 3 seconds (silent update)
+    const interval = setInterval(() => {
+      fetchAllReservations(dateFilter || undefined, true);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [dateFilter, fetchAllReservations]);
 
   const employeeIds = new Set(users.filter(u => u.role === 'employee').map(u => u.id));
   
