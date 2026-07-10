@@ -29,6 +29,7 @@ export interface ParkingSlot {
   status: string;
   reserved_for_manager_id?: string | null;
   reserved_for_manager_name?: string | null;
+  reserved_for_manager_role?: string | null;
 }
 
 export interface Reservation {
@@ -64,6 +65,7 @@ export interface SlotStatus {
   reservation?: Reservation;
   manager_id?: string;
   manager_name?: string;
+  manager_role?: string;
 }
 
 export interface Toast {

@@ -13,6 +13,12 @@ def get_manager_name(db: Session, manager_id: Optional[str]) -> Optional[str]:
     mgr = db.query(Employee).filter(Employee.id == manager_id).first()
     return mgr.name if mgr else None
 
+def get_manager_role(db: Session, manager_id: Optional[str]) -> Optional[str]:
+    if not manager_id:
+        return None
+    mgr = db.query(Employee).filter(Employee.id == manager_id).first()
+    return mgr.role if mgr else None
+
 def get_slots_by_floor(db: Session, floor_id: Optional[str] = None) -> List[SlotSchema]:
     query = db.query(ParkingSlot).order_by(ParkingSlot.position)
     if floor_id:
@@ -26,7 +32,8 @@ def get_slots_by_floor(db: Session, floor_id: Optional[str] = None) -> List[Slot
             position=s.position,
             status=s.status,
             reserved_for_manager_id=s.reserved_for_manager_id,
-            reserved_for_manager_name=get_manager_name(db, s.reserved_for_manager_id)
+            reserved_for_manager_name=get_manager_name(db, s.reserved_for_manager_id),
+            reserved_for_manager_role=get_manager_role(db, s.reserved_for_manager_id)
         ) for s in slots
     ]
 
@@ -49,7 +56,8 @@ def create_slot(db: Session, data: dict) -> SlotSchema:
         position=new_slot.position,
         status=new_slot.status,
         reserved_for_manager_id=new_slot.reserved_for_manager_id,
-        reserved_for_manager_name=get_manager_name(db, new_slot.reserved_for_manager_id)
+        reserved_for_manager_name=get_manager_name(db, new_slot.reserved_for_manager_id),
+        reserved_for_manager_role=get_manager_role(db, new_slot.reserved_for_manager_id)
     )
 
 def update_slot(db: Session, slot_id: str, data: dict) -> Optional[SlotSchema]:
@@ -68,7 +76,8 @@ def update_slot(db: Session, slot_id: str, data: dict) -> Optional[SlotSchema]:
         position=slot.position,
         status=slot.status,
         reserved_for_manager_id=slot.reserved_for_manager_id,
-        reserved_for_manager_name=get_manager_name(db, slot.reserved_for_manager_id)
+        reserved_for_manager_name=get_manager_name(db, slot.reserved_for_manager_id),
+        reserved_for_manager_role=get_manager_role(db, slot.reserved_for_manager_id)
     )
 
 def delete_slot(db: Session, slot_id: str) -> bool:

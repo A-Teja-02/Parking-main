@@ -45,7 +45,7 @@ export function ParkingSpace({
   onAvailableClick,
   onMySpotClick,
 }: ParkingSpaceProps) {
-  const { slot, state, reservation, manager_name } = slotStatus;
+  const { slot, state, reservation, manager_name, manager_role } = slotStatus;
   const { user } = useAuthStore();
   const isMySlot = slot.reserved_for_manager_id === user?.id;
   const isClickable = (user?.role === 'manager' || user?.role === 'hr')
@@ -112,10 +112,19 @@ export function ParkingSpace({
   };
 
   const baseStyle = styles[state] || styles.unavailable;
+  const isManagerOrHR = user?.role === 'manager' || user?.role === 'hr';
   const s = {
     ...baseStyle,
-    cursor: (user?.role === 'manager' && !isMySlot) ? 'not-allowed' : baseStyle.cursor
+    cursor: (isManagerOrHR && !isMySlot) ? 'not-allowed' : baseStyle.cursor
   };
+  
+  if (state === 'reserved_manager' && manager_role === 'hr') {
+    s.background = '#F5F3FF';
+    s.border = '2px solid #7C3AED';
+    s.labelColor = '#6D28D9';
+    s.labelBg = '#EDE9FE';
+  }
+  
   const isReserved = state === 'reserved_employee' || state === 'reserved_manager';
 
   return (
@@ -185,7 +194,7 @@ export function ParkingSpace({
             top: '-10px',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: '#F59E0B',
+            background: manager_role === 'hr' ? '#7C3AED' : '#F59E0B',
             color: 'white',
             fontSize: '10px',
             fontWeight: '600',
@@ -193,9 +202,10 @@ export function ParkingSpace({
             padding: '3px 10px',
             borderRadius: '20px',
             whiteSpace: 'nowrap',
+            zIndex: 2,
           }}
         >
-          MANAGER
+          {manager_role === 'hr' ? 'HR' : 'MANAGER'}
         </motion.div>
       )}
 
@@ -235,8 +245,8 @@ export function ParkingSpace({
           </>
         )}
         {state === 'reserved_manager' && (
-          <div style={{ fontWeight: '700', color: '#92400E', fontSize: '15px', lineHeight: 1.3 }}>
-            {manager_name || 'Manager'}
+          <div style={{ fontWeight: '700', color: manager_role === 'hr' ? '#6D28D9' : '#92400E', fontSize: '15px', lineHeight: 1.3 }}>
+            {manager_name || (manager_role === 'hr' ? 'HR' : 'Manager')}
           </div>
         )}
         {state === 'mine' && (

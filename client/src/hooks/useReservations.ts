@@ -32,6 +32,7 @@ export function useSlotStatus(): SlotStatus[] {
       reservation,
       manager_id: slot.reserved_for_manager_id || undefined,
       manager_name: slot.reserved_for_manager_name || undefined,
+      manager_role: slot.reserved_for_manager_role || undefined,
     };
   });
 }

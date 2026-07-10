@@ -87,6 +87,7 @@ class Slot(BaseModel):
     status: str
     reserved_for_manager_id: Optional[str] = None
     reserved_for_manager_name: Optional[str] = None
+    reserved_for_manager_role: Optional[str] = None
 
 class ReservationCreate(BaseModel):
     user_id: str
