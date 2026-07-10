@@ -23,7 +23,7 @@ export function ParkingManagement() {
   });
 
   const floorSlots = slots.filter(s => s.floor_id === selectedFloorId);
-  const managers = users.filter(u => u.role === 'manager');
+  const managers = users.filter(u => u.role === 'manager' || u.role === 'hr');
 
   const handleEdit = (slot: ParkingSlot) => {
     setEditingSlot(slot);

@@ -15,7 +15,7 @@ export function useSlotStatus(): SlotStatus[] {
     if (slot.status !== 'active') {
       state = 'unavailable';
     } else if (slot.reserved_for_manager_id) {
-      if (user?.role === 'manager' && slot.reserved_for_manager_id === user.id) {
+      if ((user?.role === 'manager' || user?.role === 'hr') && slot.reserved_for_manager_id === user.id) {
         state = release ? 'released_manager' : 'mine';
       } else {
         state = release ? 'available' : 'reserved_manager';
@@ -31,9 +31,7 @@ export function useSlotStatus(): SlotStatus[] {
       state, 
       reservation,
       manager_id: slot.reserved_for_manager_id || undefined,
-      manager_name: slot.reserved_for_manager_id
-        ? users.find((u) => u.id === slot.reserved_for_manager_id)?.name
-        : undefined,
+      manager_name: slot.reserved_for_manager_name || undefined,
     };
   });
 }

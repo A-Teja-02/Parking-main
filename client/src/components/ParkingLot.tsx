@@ -17,7 +17,7 @@ export function ParkingLot() {
   } = useAppStore();
 
   const handleAvailableClick = (slot: any) => {
-    if (user?.role === 'manager' && slot.reserved_for_manager_id === user.id) {
+    if ((user?.role === 'manager' || user?.role === 'hr') && slot.reserved_for_manager_id === user.id) {
       setSelectedSlot(slot);
       setShowManagerReleaseModal(true);
       return;
@@ -27,7 +27,7 @@ export function ParkingLot() {
   };
 
   const handleMySpotClick = (slot: any) => {
-    if (user?.role === 'manager' && slot.reserved_for_manager_id === user.id) {
+    if ((user?.role === 'manager' || user?.role === 'hr') && slot.reserved_for_manager_id === user.id) {
       setSelectedSlot(slot);
       setShowManagerReleaseModal(true);
       return;

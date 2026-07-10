@@ -48,7 +48,7 @@ export function ParkingSpace({
   const { slot, state, reservation, manager_name } = slotStatus;
   const { user } = useAuthStore();
   const isMySlot = slot.reserved_for_manager_id === user?.id;
-  const isClickable = user?.role === 'manager'
+  const isClickable = (user?.role === 'manager' || user?.role === 'hr')
     ? isMySlot
     : (state === 'available' || state === 'mine' || state === 'released_manager');
 
