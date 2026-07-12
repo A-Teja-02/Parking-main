@@ -8,7 +8,7 @@ import { api } from '../services/api';
 
 export function ManagerReleaseModal() {
   const { user } = useAuthStore();
-  const { tomorrowDate, fetchManagerReleases } = useParkingStore();
+  const { tomorrowDate, selectedDate, fetchManagerReleases, managerReleases } = useParkingStore();
   const { 
     showManagerReleaseModal, 
     setShowManagerReleaseModal, 
@@ -18,20 +18,27 @@ export function ManagerReleaseModal() {
 
   const [isReleasing, setIsReleasing] = useState(false);
   const [releaseType, setReleaseType] = useState<'single' | 'range'>('single');
-  const [singleDate, setSingleDate] = useState(tomorrowDate || '');
-  const [startDate, setStartDate] = useState(tomorrowDate || '');
-  const [endDate, setEndDate] = useState(tomorrowDate || '');
+  
+  const initialDate = selectedDate || tomorrowDate || '';
+  const [singleDate, setSingleDate] = useState(initialDate);
+  const [startDate, setStartDate] = useState(initialDate);
+  const [endDate, setEndDate] = useState(initialDate);
 
-  // Update dates when tomorrowDate changes
+  // Update dates when selectedDate or tomorrowDate changes
   useEffect(() => {
-    if (tomorrowDate) {
-      setSingleDate(tomorrowDate);
-      setStartDate(tomorrowDate);
-      setEndDate(tomorrowDate);
+    const activeDate = selectedDate || tomorrowDate || '';
+    if (activeDate) {
+      setSingleDate(activeDate);
+      setStartDate(activeDate);
+      setEndDate(activeDate);
     }
-  }, [tomorrowDate]);
+  }, [selectedDate, tomorrowDate]);
 
   if (!user || !selectedSlot) return null;
+
+  const isCurrentlyReleased = releaseType === 'single' && managerReleases.some(
+    r => r.slot_id === selectedSlot.id && r.release_date === singleDate
+  );
 
   const handleRelease = async () => {
     setIsReleasing(true);
@@ -54,13 +61,44 @@ export function ManagerReleaseModal() {
         await api.slots.release(selectedSlot.id, { start_date: startDate, end_date: endDate });
       }
       
-      if (tomorrowDate) {
+      // Refresh status
+      await useParkingStore.getState().fetchSlots();
+      if (selectedDate) {
+        await useParkingStore.getState().fetchReservations(selectedDate);
+        await fetchManagerReleases(selectedDate);
+      }
+      if (tomorrowDate && tomorrowDate !== selectedDate) {
         await fetchManagerReleases(tomorrowDate);
       }
+      
       addToast({ type: 'success', message: 'Slot released successfully.' });
       setShowManagerReleaseModal(false);
     } catch (err: any) {
       addToast({ type: 'error', message: err.message || 'Failed to release slot.' });
+    } finally {
+      setIsReleasing(false);
+    }
+  };
+
+  const handleReclaim = async () => {
+    setIsReleasing(true);
+    try {
+      await api.slots.cancelRelease(selectedSlot.id, singleDate);
+      
+      // Refresh status
+      await useParkingStore.getState().fetchSlots();
+      if (selectedDate) {
+        await useParkingStore.getState().fetchReservations(selectedDate);
+        await fetchManagerReleases(selectedDate);
+      }
+      if (tomorrowDate && tomorrowDate !== selectedDate) {
+        await fetchManagerReleases(tomorrowDate);
+      }
+      
+      addToast({ type: 'success', message: 'Slot reclaimed successfully.' });
+      setShowManagerReleaseModal(false);
+    } catch (err: any) {
+      addToast({ type: 'error', message: err.message || 'Failed to reclaim slot.' });
     } finally {
       setIsReleasing(false);
     }
@@ -110,10 +148,14 @@ export function ManagerReleaseModal() {
             >
             <div style={{ background: '#FFFFFF', borderRadius: '20px', boxShadow: '0 24px 48px -12px rgba(16,24,40,0.25)', overflow: 'hidden' }}>
               {/* Header */}
-              <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #2D5491 100%)', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#FFFFFF' }}>
+              <div style={{ background: isCurrentlyReleased ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'linear-gradient(135deg, #1E3A5F 0%, #2D5491 100%)', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#FFFFFF' }}>
                 <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>Release Parking Slot</h3>
-                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', margin: '4px 0 0 0' }}>Release slot {selectedSlot.label} for others</p>
+                  <h3 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
+                    {isCurrentlyReleased ? 'Reclaim Parking Slot' : 'Release Parking Slot'}
+                  </h3>
+                  <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', margin: '4px 0 0 0' }}>
+                    {isCurrentlyReleased ? `Reclaim slot ${selectedSlot.label}` : `Release slot ${selectedSlot.label} for others`}
+                  </p>
                 </div>
                 <button onClick={() => setShowManagerReleaseModal(false)} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '8px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', cursor: 'pointer' }}>
                   <X size={16} />
@@ -244,24 +286,45 @@ export function ManagerReleaseModal() {
                   >
                     Cancel
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleRelease}
-                    disabled={isReleasing}
-                    style={{
-                      flex: 2,
-                      padding: '11px 20px',
-                      borderRadius: '10px',
-                      border: 'none',
-                      background: isReleasing ? '#4A6FA5' : '#1E3A5F',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: '#FFFFFF',
-                      cursor: isReleasing ? 'wait' : 'pointer'
-                    }}
-                  >
-                    {isReleasing ? 'Releasing…' : 'Confirm Release'}
-                  </button>
+                  {isCurrentlyReleased ? (
+                    <button
+                      type="button"
+                      onClick={handleReclaim}
+                      disabled={isReleasing}
+                      style={{
+                        flex: 2,
+                        padding: '11px 20px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: isReleasing ? '#A7F3D0' : '#10B981',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                        cursor: isReleasing ? 'wait' : 'pointer'
+                      }}
+                    >
+                      {isReleasing ? 'Reclaiming…' : 'Confirm Reclaim'}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleRelease}
+                      disabled={isReleasing}
+                      style={{
+                        flex: 2,
+                        padding: '11px 20px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        background: isReleasing ? '#4A6FA5' : '#1E3A5F',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#FFFFFF',
+                        cursor: isReleasing ? 'wait' : 'pointer'
+                      }}
+                    >
+                      {isReleasing ? 'Releasing…' : 'Confirm Release'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
