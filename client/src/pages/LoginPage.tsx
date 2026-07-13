@@ -88,7 +88,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your.name@quadrantitservices.com"
+                placeholder="Email"
                 style={{
                   width: '100%',
                   padding: '12px 14px',
