@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LogIn, Eye, EyeOff, Car, Shield, Clock, Building2 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { LOGIN_TITLE, COMPANY_NAME, APP_NAME } from '../constants';
@@ -15,6 +15,16 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
+
+  const backgrounds = ['/bg1.jpg', '/bg2.jpg', '/bg3.jpg'];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % backgrounds.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [backgrounds.length]);
 
   const { login } = useAuthStore();
   const { addToast } = useAppStore();
@@ -38,11 +48,42 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
 
   return (
     <div className="auth-page">
+      {/* Background Slideshow */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 0,
+        overflow: 'hidden'
+      }}>
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={currentBgIndex}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1.1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: 'easeInOut' }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `linear-gradient(rgba(11, 26, 45, 0.65), rgba(11, 26, 45, 0.65)), url(${backgrounds[currentBgIndex]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+        </AnimatePresence>
+      </div>
+
       {/* Background Shapes */}
-      <div className="auth-bg-shape auth-bg-shape-1" />
-      <div className="auth-bg-shape auth-bg-shape-2" />
-      <div className="auth-bg-shape auth-bg-shape-3" />
-      <div className="auth-bg-shape auth-bg-shape-4" />
+      <div className="auth-bg-shape auth-bg-shape-1" style={{ zIndex: 1 }} />
+      <div className="auth-bg-shape auth-bg-shape-2" style={{ zIndex: 1 }} />
+      <div className="auth-bg-shape auth-bg-shape-3" style={{ zIndex: 1 }} />
+      <div className="auth-bg-shape auth-bg-shape-4" style={{ zIndex: 1 }} />
 
       {/* Glassmorphic Form Card */}
       <div className="auth-glass-box">

@@ -141,10 +141,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: linear-gradient(rgba(11, 26, 45, 0.7), rgba(11, 26, 45, 0.7)), url('/auth_bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #0b1a2d;
   position: relative;
   overflow: hidden;
   padding: 24px;

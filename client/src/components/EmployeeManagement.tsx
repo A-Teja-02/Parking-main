@@ -57,6 +57,16 @@ export function EmployeeManagement() {
     }
   };
 
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    try {
+      await api.users.update(userId, { role: newRole });
+      await fetchUsers();
+      addToast({ type: 'success', message: 'User role updated successfully.' });
+    } catch (err: any) {
+      addToast({ type: 'error', message: err.message || 'Failed to update user role.' });
+    }
+  };
+
   return (
     <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E4E7EC', overflow: 'hidden' }}>
       <div style={{ padding: '20px 24px', borderBottom: '1px solid #E4E7EC', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -115,7 +125,28 @@ export function EmployeeManagement() {
                     </div>
                   </div>
                 </td>
-                <td style={{ padding: '16px 24px', fontSize: '14px', color: '#475467', textTransform: 'capitalize' }}>{u.role}</td>
+                <td style={{ padding: '16px 24px' }}>
+                  <select
+                    value={u.role}
+                    onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      border: '1px solid #D0D5DD',
+                      background: '#FFFFFF',
+                      fontSize: '14px',
+                      color: '#344054',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)',
+                    }}
+                  >
+                    <option value="employee">Employee</option>
+                    <option value="manager">Manager</option>
+                    <option value="hr">HR / Admin</option>
+                  </select>
+                </td>
 
                 <td style={{ padding: '16px 24px' }}>
                   <span style={{ padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '500', background: u.is_active ? '#F0FDF4' : '#FEF2F2', color: u.is_active ? '#065F46' : '#991B1B' }}>

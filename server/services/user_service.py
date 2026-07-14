@@ -97,9 +97,22 @@ def update_user(db: Session, user_id: str, update_data: dict) -> Optional[User]:
         return None
 
     allowed_fields = {"name", "email", "department", "vehicle_number", "mobile_number", "avatar_initials", "role", "employee_id"}
+    
+    old_role = emp.role
+    
     for key, value in update_data.items():
         if key in allowed_fields:
             setattr(emp, key, value)
+
+    # If the role was changed from manager to something else, clean up manager assets
+    new_role = emp.role
+    if old_role == "manager" and new_role != "manager":
+        # Unassign manager from any parking slots
+        db.query(ParkingSlot).filter(ParkingSlot.reserved_for_manager_id == user_id).update(
+            {ParkingSlot.reserved_for_manager_id: None}
+        )
+        # Clean up manager releases
+        db.query(ManagerRelease).filter(ManagerRelease.manager_id == user_id).delete()
 
     emp.updated_at = datetime.now(timezone.utc)
     db.commit()

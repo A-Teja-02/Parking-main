@@ -72,9 +72,32 @@ def get_me(user: User = Depends(get_current_user)):
     return user
 
 
+@router.post("/activate/request")
+def activate_request(request: ActivateRequestSchema, db: Session = Depends(get_db)):
+    try:
+        return auth_service.request_activation(db, request.email)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.post("/activate/verify")
+def activate_verify(request: ActivateVerifySchema, db: Session = Depends(get_db)):
+    try:
+        return auth_service.verify_activation_otp(db, request.email, request.otp)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
+
+@router.post("/activate/complete")
+def activate_complete(request: ActivateCompleteSchema, db: Session = Depends(get_db)):
+    if request.password != request.confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match.")
+    try:
+        return auth_service.complete_activation(
+            db, request.name, request.email, request.otp, request.password
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 # ─── Forgot Password ─────────────────────────────────────────────────────────
 
 @router.post("/forgot-password")
