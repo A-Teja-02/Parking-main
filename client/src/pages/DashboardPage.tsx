@@ -97,13 +97,17 @@ export function DashboardPage() {
           <DashboardHeader />
 
           {/* Today's Availability Alert Banner */}
-          {selectedDate === tomorrowDate && todayAvailability && todayAvailability.available > 0 && (
+          {selectedDate === tomorrowDate && todayAvailability && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               style={{
-                background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
-                border: '1px solid #10B981',
+                background: todayAvailability.available > 0
+                  ? 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)'
+                  : 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)',
+                border: todayAvailability.available > 0
+                  ? '1px solid #10B981'
+                  : '1px solid #CBD5E1',
                 borderRadius: '16px',
                 padding: '16px 24px',
                 marginBottom: '20px',
@@ -112,24 +116,49 @@ export function DashboardPage() {
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
                 gap: '16px',
-                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.08)',
+                boxShadow: todayAvailability.available > 0
+                  ? '0 4px 15px rgba(16, 185, 129, 0.08)'
+                  : '0 4px 15px rgba(148, 163, 184, 0.08)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ background: '#10B981', color: 'white', padding: '6px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{
+                  background: todayAvailability.available > 0 ? '#10B981' : '#64748B',
+                  color: 'white',
+                  padding: '6px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
                   <Calendar size={16} />
                 </div>
                 <div>
-                  <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#065F46', margin: 0 }}>Today's slots are available!</h4>
-                  <p style={{ fontSize: '13px', color: '#047857', margin: '2px 0 0 0' }}>
-                    There are <strong>{todayAvailability.available} / {todayAvailability.total}</strong> slots available for today.
+                  <h4 style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: todayAvailability.available > 0 ? '#065F46' : '#334155',
+                    margin: 0
+                  }}>
+                    {todayAvailability.available > 0 ? "Today's slots are available!" : "Today's slots are fully reserved"}
+                  </h4>
+                  <p style={{
+                    fontSize: '13px',
+                    color: todayAvailability.available > 0 ? '#047857' : '#475569',
+                    margin: '2px 0 0 0'
+                  }}>
+                    {todayAvailability.available > 0 ? (
+                      <>There are <strong>{todayAvailability.available} / {todayAvailability.total}</strong> slots available for today.</>
+                    ) : (
+                      <>All <strong>{todayAvailability.total}</strong> slots are reserved for today. You can still view the slot status.</>
+                    )}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedDate(todayDate)}
                 style={{
-                  background: '#10B981',
+                  background: todayAvailability.available > 0 ? '#10B981' : '#64748B',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
@@ -137,13 +166,15 @@ export function DashboardPage() {
                   fontSize: '12px',
                   fontWeight: '600',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 4px rgba(16, 185, 129, 0.15)',
+                  boxShadow: todayAvailability.available > 0
+                    ? '0 2px 4px rgba(16, 185, 129, 0.15)'
+                    : '0 2px 4px rgba(100, 116, 139, 0.15)',
                   transition: 'background-color 150ms',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#059669'}
-                onMouseLeave={(e) => e.currentTarget.style.background = '#10B981'}
+                onMouseEnter={(e) => e.currentTarget.style.background = todayAvailability.available > 0 ? '#059669' : '#475569'}
+                onMouseLeave={(e) => e.currentTarget.style.background = todayAvailability.available > 0 ? '#10B981' : '#64748B'}
               >
-                View & Book Today
+                {todayAvailability.available > 0 ? 'View & Book Today' : 'View Today'}
               </button>
             </motion.div>
           )}

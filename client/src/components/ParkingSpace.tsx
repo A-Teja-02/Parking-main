@@ -2,6 +2,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../store/useAuthStore';
 import type { SlotStatus } from '../types';
 
+export const getSpecialDesignation = (name?: string | null) => {
+  if (!name) return null;
+  const n = name.trim().toLowerCase();
+  if (n === 'krishna') return 'COO';
+  if (n === 'amarnath') return 'CFO';
+  if (n.startsWith('murali krishna')) return 'CEO';
+  if (n.startsWith('vinod')) return 'HR Director';
+  return null;
+};
+
+export const isSpecialUser = (name?: string | null) => {
+  if (!name) return false;
+  const n = name.trim().toLowerCase();
+  return n === 'sumanth.v' || n.startsWith('vinod') || n.startsWith('srinivas.k');
+};
+
 interface CarIconProps {
   color?: string;
   size?: number;
@@ -46,6 +62,8 @@ export function ParkingSpace({
   onMySpotClick,
 }: ParkingSpaceProps) {
   const { slot, state, reservation, manager_name, manager_role } = slotStatus;
+  const designation = getSpecialDesignation(manager_name);
+  const displayName = designation || manager_name;
   const { user } = useAuthStore();
   const isMySlot = slot.reserved_for_manager_id === user?.id;
   const isClickable = (user?.role === 'manager' || user?.role === 'hr')
@@ -118,7 +136,12 @@ export function ParkingSpace({
     cursor: (isManagerOrHR && !isMySlot) ? 'not-allowed' : baseStyle.cursor
   };
   
-  if (state === 'reserved_manager' && manager_role === 'hr') {
+  if (state === 'reserved_manager' && designation) {
+    s.background = '#FFFBEB';
+    s.border = '2px solid #FCD34D';
+    s.labelColor = '#92400E';
+    s.labelBg = '#FEF3C7';
+  } else if (state === 'reserved_manager' && manager_role === 'hr') {
     s.background = '#F5F3FF';
     s.border = '2px solid #7C3AED';
     s.labelColor = '#6D28D9';
@@ -185,7 +208,7 @@ export function ParkingSpace({
         </motion.div>
       )}
       
-      {state === 'reserved_manager' && (
+      {state === 'reserved_manager' && !designation && (
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -245,14 +268,14 @@ export function ParkingSpace({
           </>
         )}
         {state === 'reserved_manager' && (
-          <div style={{ fontWeight: '700', color: manager_role === 'hr' ? '#6D28D9' : '#92400E', fontSize: '15px', lineHeight: 1.3 }}>
-            {manager_name || (manager_role === 'hr' ? 'HR' : 'Manager')}
+          <div style={{ fontWeight: '700', color: (designation || manager_role !== 'hr') ? '#92400E' : '#6D28D9', fontSize: '15px', lineHeight: 1.3 }}>
+            {displayName || (manager_role === 'hr' ? 'HR' : 'Manager')}
           </div>
         )}
         {state === 'mine' && (
           <>
             <div style={{ fontWeight: '700', color: '#1E3A5F', fontSize: '15px', lineHeight: 1.3 }}>
-              {reservation?.user_name || user?.name || 'My Reservation'}
+              {reservation?.user_name || getSpecialDesignation(user?.name) || user?.name || 'My Reservation'}
             </div>
             {reservation && (
               <div style={{ fontSize: '11px', color: '#4A6FA5', marginTop: '4px', fontFamily: 'monospace', letterSpacing: '0.02em' }}>

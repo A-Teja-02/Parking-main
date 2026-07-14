@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 from models.schemas import Floor, Slot, ManagerRelease, User
 from services import parking_service
-from routers.auth import get_current_user, get_hr_user
+from routers.auth import get_current_user, get_hr_user, is_hr
 from services.reservation_service import get_tomorrow_date, is_weekend
 from db import get_db
 
@@ -66,11 +66,11 @@ def remove_manager(slot_id: str, hr: User = Depends(get_hr_user), db: Session = 
 
 @router.post("/slots/{slot_id}/release")
 def release_slot(slot_id: str, data: dict, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if user.role != "manager" and user.role != "hr":
+    if user.role != "manager" and not is_hr(user):
         raise HTTPException(status_code=403, detail="Not authorized")
     try:
         manager_id = data.get("manager_id", user.id)
-        if user.role != "hr" and manager_id != user.id:
+        if not is_hr(user) and manager_id != user.id:
             raise HTTPException(status_code=403, detail="Cannot release another manager's slot")
             
         start_date = data.get("start_date")
@@ -90,7 +90,7 @@ def release_slot(slot_id: str, data: dict, user: User = Depends(get_current_user
 
 @router.get("/slots/reserved")
 def get_reserved_slots(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if user.role != "hr":
+    if not is_hr(user):
         raise HTTPException(status_code=403, detail="HR access required")
     return parking_service.get_reserved_slots(db)
 
@@ -100,11 +100,11 @@ def get_manager_releases(date: str, user: User = Depends(get_current_user), db: 
 
 @router.delete("/slots/{slot_id}/release")
 def cancel_release(slot_id: str, data: dict, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if user.role != "manager" and user.role != "hr":
+    if user.role != "manager" and not is_hr(user):
         raise HTTPException(status_code=403, detail="Not authorized")
     try:
         manager_id = data.get("manager_id", user.id)
-        if user.role != "hr" and manager_id != user.id:
+        if not is_hr(user) and manager_id != user.id:
             raise HTTPException(status_code=403, detail="Cannot cancel another manager's release")
             
         date = data.get("date")

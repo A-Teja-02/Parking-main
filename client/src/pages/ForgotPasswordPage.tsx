@@ -170,8 +170,8 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
               <div
                 style={{
                   background: '#FFFFFF',
-                  padding: '8px 16px',
-                  borderRadius: '16px',
+                  padding: '12px 20px',
+                  borderRadius: '20px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -180,7 +180,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
                   boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
                 }}
               >
-                <img src="/logo.png" alt="Logo" style={{ height: '32px', objectFit: 'contain' }} />
+                <img src="/logo.png" alt="Logo" style={{ height: '56px', objectFit: 'contain' }} />
               </div>
               <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
                 {step === 1 ? 'Reset Password' : step === 2 ? 'Verify Code' : 'New Password'}

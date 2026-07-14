@@ -9,6 +9,7 @@ export function EmployeeManagement() {
   const { addToast } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({ email: '', role: 'employee' });
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
     try {
@@ -20,14 +21,20 @@ export function EmployeeManagement() {
     }
   };
 
-  const handleDelete = async (userId: string) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) return;
+  const handleDeleteClick = (userId: string) => {
+    setDeletingUserId(userId);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingUserId) return;
     try {
-      await api.users.delete(userId);
+      await api.users.delete(deletingUserId);
       await fetchUsers();
       addToast({ type: 'success', message: 'User deleted.' });
     } catch (err: any) {
       addToast({ type: 'error', message: err.message || 'Failed to delete user.' });
+    } finally {
+      setDeletingUserId(null);
     }
   };
 
@@ -120,7 +127,7 @@ export function EmployeeManagement() {
                     <button onClick={() => handleToggleStatus(u.id, u.is_active)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#667085' }} title="Toggle Status">
                       {u.is_active ? <ToggleRight size={20} color="#059669" /> : <ToggleLeft size={20} />}
                     </button>
-                    <button onClick={() => handleDelete(u.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#EF4444' }} title="Delete User">
+                    <button onClick={() => handleDeleteClick(u.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#EF4444' }} title="Delete User">
                       <Trash2 size={18} />
                     </button>
                   </div>
@@ -130,6 +137,84 @@ export function EmployeeManagement() {
           </tbody>
         </table>
       </div>
+
+      {deletingUserId && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(16, 24, 40, 0.4)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '100%',
+            boxShadow: '0 20px 24px -4px rgba(16, 24, 40, 0.1), 0 8px 8px -4px rgba(16, 24, 40, 0.04)',
+            textAlign: 'center',
+            margin: '0 16px'
+          }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#FEE4E2',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px auto',
+              color: '#D92D20'
+            }}>
+              <Trash2 size={24} />
+            </div>
+            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#101828', marginBottom: '8px', marginTop: 0 }}>Delete User</h3>
+            <p style={{ fontSize: '14px', color: '#475569', marginBottom: '24px', lineHeight: 1.5 }}>
+              Are you sure you want to delete this user? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                onClick={() => setDeletingUserId(null)}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #D0D5DD',
+                  background: '#FFFFFF',
+                  color: '#344054',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#D92D20',
+                  color: '#FFFFFF',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -14,13 +14,14 @@ import { useParkingStore } from './store/useParkingStore';
 import { ChangePasswordModal } from './components/ChangePasswordModal';
 import { useAppStore } from './store/useAppStore';
 import { ProfilePage } from './pages/ProfilePage';
+import { isSpecialUser } from './components/ParkingSpace';
 
 type AuthView = 'login' | 'forgot-password';
 
 function AppContent() {
-  const { role } = useAuthStore();
+  const { role, user } = useAuthStore();
   const { isWeekend, fetchStatus } = useParkingStore();
-  const { currentView } = useAppStore();
+  const { currentView, specialView } = useAppStore();
 
   useEffect(() => {
     fetchStatus();
@@ -28,6 +29,18 @@ function AppContent() {
 
   if (currentView === 'profile') {
     return <ProfilePage />;
+  }
+
+  // Special users from HR department get access to both dashboards
+  if (isSpecialUser(user?.name)) {
+    if (specialView === 'hr') {
+      return <AdminDashboardPage />;
+    } else {
+      if (isWeekend) {
+        return <WeekendScreen />;
+      }
+      return <DashboardPage />;
+    }
   }
 
   if (role === 'hr') {

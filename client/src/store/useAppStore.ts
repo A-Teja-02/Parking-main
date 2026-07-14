@@ -5,6 +5,7 @@ let toastId = 0;
 
 interface UIState {
   currentView: 'dashboard' | 'profile';
+  specialView: 'hr' | 'map';
   toasts: Toast[];
   selectedSlot: ParkingSlot | null;
   showReservationModal: boolean;
@@ -14,6 +15,7 @@ interface UIState {
   animatingSlot: string | null;
 
   setCurrentView: (view: 'dashboard' | 'profile') => void;
+  setSpecialView: (view: 'hr' | 'map') => void;
   setSelectedSlot: (slot: ParkingSlot | null) => void;
   setShowReservationModal: (show: boolean) => void;
   setShowCancellationModal: (show: boolean) => void;
@@ -27,6 +29,7 @@ interface UIState {
 
 export const useAppStore = create<UIState>((set, get) => ({
   currentView: 'dashboard',
+  specialView: 'hr',
   toasts: [],
   selectedSlot: null,
   showReservationModal: false,
@@ -36,6 +39,7 @@ export const useAppStore = create<UIState>((set, get) => ({
   animatingSlot: null,
 
   setCurrentView: (view) => set({ currentView: view }),
+  setSpecialView: (view) => set({ specialView: view }),
   setSelectedSlot: (slot) => set({ selectedSlot: slot }),
   setShowReservationModal: (show) => set({ showReservationModal: show }),
   setShowCancellationModal: (show) => set({ showCancellationModal: show }),

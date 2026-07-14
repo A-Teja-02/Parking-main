@@ -6,6 +6,6 @@ export const RESERVATION_CLOSE_MINUTE = 59;
 
 export const ANIMATION_DURATION = 600; // ms
 
-export const COMPANY_NAME = 'Quadrant';
+export const COMPANY_NAME = 'Quadrant IT Services';
 export const APP_NAME = 'Parking Reservation';
 export const LOGIN_TITLE = 'Company Login';

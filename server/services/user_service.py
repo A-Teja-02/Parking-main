@@ -7,7 +7,7 @@ from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
-from db.models import Employee
+from db.models import Employee, PasswordReset, ParkingSlot, Reservation, ManagerRelease, OTPVerification
 from models.schemas import User
 
 
@@ -127,6 +127,24 @@ def delete_user(db: Session, user_id: str) -> bool:
     if not emp:
         return False
 
+    # 1. Clean up password resets & OTPs
+    db.query(PasswordReset).filter(PasswordReset.employee_id == user_id).delete()
+    db.query(OTPVerification).filter(OTPVerification.email == emp.email).delete()
+
+    # 2. Unassign this manager from any parking slots
+    db.query(ParkingSlot).filter(ParkingSlot.reserved_for_manager_id == user_id).update(
+        {ParkingSlot.reserved_for_manager_id: None}
+    )
+
+    # 3. Clean up manager releases
+    db.query(ManagerRelease).filter(ManagerRelease.manager_id == user_id).delete()
+
+    # 4. Clean up reservations
+    db.query(Reservation).filter(
+        (Reservation.user_id == user_id) | (Reservation.reserved_by == user_id)
+    ).delete()
+
+    # 5. Delete employee
     db.delete(emp)
     db.commit()
 

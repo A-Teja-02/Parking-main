@@ -39,9 +39,15 @@ def get_current_user(
     return user
 
 
+def is_hr(user: User) -> bool:
+    if not user:
+        return False
+    return user.role == "hr" or (user.name and user.name.strip().lower() in ["sumanth.v", "vinod. v", "srinivas.k"])
+
+
 def get_hr_user(user: User = Depends(get_current_user)) -> User:
     """Require HR role."""
-    if user.role != "hr":
+    if not is_hr(user):
         raise HTTPException(status_code=403, detail="HR access required")
     return user
 

@@ -3,10 +3,11 @@ import { LogOut, ChevronDown, User, Building2, Key, Phone } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useAppStore } from '../store/useAppStore';
 import { COMPANY_NAME, APP_NAME } from '../constants';
+import { isSpecialUser } from './ParkingSpace';
 
 export function Navbar() {
   const { user, logout } = useAuthStore();
-  const { setShowChangePasswordModal, setCurrentView } = useAppStore();
+  const { setShowChangePasswordModal, setCurrentView, specialView, setSpecialView } = useAppStore();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -37,20 +38,20 @@ export function Navbar() {
         style={{
           margin: '0 auto',
           padding: '0 24px',
-          height: '64px',
+          height: '80px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
       >
         {/* Logo + Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img src="/logo.png" alt="Logo" style={{ height: '32px', objectFit: 'contain', flexShrink: 0 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <img src="/logo.png" alt="Logo" style={{ height: '48px', objectFit: 'contain', flexShrink: 0 }} />
           <div>
             <span
               style={{
-                fontSize: '15px',
-                fontWeight: '600',
+                fontSize: '20px',
+                fontWeight: '700',
                 color: '#101828',
                 letterSpacing: '-0.01em',
               }}
@@ -59,16 +60,62 @@ export function Navbar() {
             </span>
             <span
               style={{
-                fontSize: '15px',
+                fontSize: '18px',
                 fontWeight: '400',
                 color: '#667085',
-                marginLeft: '6px',
+                marginLeft: '8px',
               }}
             >
               · {APP_NAME}
             </span>
           </div>
         </div>
+
+        {/* Special User Options */}
+        {isSpecialUser(user?.name) && (
+          <div style={{ display: 'flex', gap: '8px', background: '#F2F4F7', padding: '4px', borderRadius: '10px' }}>
+            <button
+              onClick={() => {
+                setSpecialView('hr');
+                setCurrentView('dashboard');
+              }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: 'none',
+                background: specialView === 'hr' ? '#FFFFFF' : 'transparent',
+                color: specialView === 'hr' ? '#1E3A5F' : '#667085',
+                fontWeight: '600',
+                fontSize: '13px',
+                cursor: 'pointer',
+                boxShadow: specialView === 'hr' ? '0 1px 3px rgba(16, 24, 40, 0.1)' : 'none',
+                transition: 'all 0.2s',
+              }}
+            >
+              HR Dashboard
+            </button>
+            <button
+              onClick={() => {
+                setSpecialView('map');
+                setCurrentView('dashboard');
+              }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: 'none',
+                background: specialView === 'map' ? '#FFFFFF' : 'transparent',
+                color: specialView === 'map' ? '#1E3A5F' : '#667085',
+                fontWeight: '600',
+                fontSize: '13px',
+                cursor: 'pointer',
+                boxShadow: specialView === 'map' ? '0 1px 3px rgba(16, 24, 40, 0.1)' : 'none',
+                transition: 'all 0.2s',
+              }}
+            >
+              Manage Parking
+            </button>
+          </div>
+        )}
 
         {/* Profile Dropdown */}
         <div ref={dropdownRef} style={{ position: 'relative' }}>

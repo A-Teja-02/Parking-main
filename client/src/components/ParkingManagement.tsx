@@ -5,6 +5,7 @@ import { useAppStore } from '../store/useAppStore';
 import { api } from '../services/api';
 import { Edit2, ShieldAlert, Trash2, Plus } from 'lucide-react';
 import type { ParkingSlot } from '../types';
+import { getSpecialDesignation } from './ParkingSpace';
 
 export function ParkingManagement() {
   const { floors, slots, selectedFloorId, setSelectedFloorId, fetchSlots } = useParkingStore();
@@ -14,6 +15,7 @@ export function ParkingManagement() {
   const [editingSlot, setEditingSlot] = useState<ParkingSlot | null>(null);
   const [status, setStatus] = useState('');
   const [managerId, setManagerId] = useState('');
+  const [deletingSlotId, setDeletingSlotId] = useState<string | null>(null);
 
   const [isAdding, setIsAdding] = useState(false);
   const [newSlot, setNewSlot] = useState({
@@ -78,14 +80,20 @@ export function ParkingManagement() {
     }
   };
 
-  const handleDeleteSlot = async (slotId: string) => {
-    if (!window.confirm(`Are you sure you want to delete slot ${slotId}?`)) return;
+  const handleDeleteSlotClick = (slotId: string) => {
+    setDeletingSlotId(slotId);
+  };
+
+  const confirmDeleteSlot = async () => {
+    if (!deletingSlotId) return;
     try {
-      await api.slots.delete(slotId);
+      await api.slots.delete(deletingSlotId);
       await fetchSlots();
       addToast({ type: 'success', message: 'Slot deleted successfully.' });
     } catch (err: any) {
       addToast({ type: 'error', message: err.message || 'Failed to delete slot.' });
+    } finally {
+      setDeletingSlotId(null);
     }
   };
 
@@ -198,7 +206,7 @@ export function ParkingManagement() {
                   <button onClick={() => handleEdit(slot)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#4A6FA5', padding: '4px' }} title="Edit Slot">
                     <Edit2 size={16} />
                   </button>
-                  <button onClick={() => handleDeleteSlot(slot.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D32F2F', padding: '4px' }} title="Delete Slot">
+                  <button onClick={() => handleDeleteSlotClick(slot.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D32F2F', padding: '4px' }} title="Delete Slot">
                     <Trash2 size={16} />
                   </button>
                 </div>
@@ -234,7 +242,7 @@ export function ParkingManagement() {
                 <select value={managerId} onChange={e => setManagerId(e.target.value)} style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #D1D5DB' }}>
                   <option value="">None</option>
                   {managers.map(m => (
-                    <option key={m.id} value={m.id}>{m.name}</option>
+                    <option key={m.id} value={m.id}>{getSpecialDesignation(m.name) || m.name}</option>
                   ))}
                 </select>
               </div>
@@ -279,7 +287,7 @@ export function ParkingManagement() {
                 <select value={newSlot.reserved_for_manager_id} onChange={e => setNewSlot({ ...newSlot, reserved_for_manager_id: e.target.value })} style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #D1D5DB' }}>
                   <option value="">None</option>
                   {managers.map(m => (
-                    <option key={m.id} value={m.id}>{m.name}</option>
+                    <option key={m.id} value={m.id}>{getSpecialDesignation(m.name) || m.name}</option>
                   ))}
                 </select>
               </div>
@@ -289,6 +297,83 @@ export function ParkingManagement() {
                 <button type="submit" style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: '#1E3A5F', color: '#FFF', cursor: 'pointer' }}>Add Slot</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {deletingSlotId && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(16, 24, 40, 0.4)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '100%',
+            boxShadow: '0 20px 24px -4px rgba(16, 24, 40, 0.1), 0 8px 8px -4px rgba(16, 24, 40, 0.04)',
+            textAlign: 'center',
+            margin: '0 16px'
+          }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: '#FEE4E2',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px auto',
+              color: '#D92D20'
+            }}>
+              <Trash2 size={24} />
+            </div>
+            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#101828', marginBottom: '8px', marginTop: 0 }}>Delete Parking Slot</h3>
+            <p style={{ fontSize: '14px', color: '#475569', marginBottom: '24px', lineHeight: 1.5 }}>
+              Are you sure you want to delete slot <strong>{deletingSlotId}</strong>? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                onClick={() => setDeletingSlotId(null)}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  border: '1px solid #D0D5DD',
+                  background: '#FFFFFF',
+                  color: '#344054',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteSlot}
+                style={{
+                  flex: 1,
+                  padding: '10px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#D92D20',
+                  color: '#FFFFFF',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                }}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

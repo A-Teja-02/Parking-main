@@ -15,17 +15,17 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { login } = useAuthStore();
   const { addToast } = useAppStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || isSubmitting) return;
-    
+
     setIsSubmitting(true);
     setError('');
-    
+
     try {
       await login(email, password);
       addToast({ type: 'success', message: 'Successfully logged in.' });
@@ -56,8 +56,8 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             <div
               style={{
                 background: '#FFFFFF',
-                padding: '8px 16px',
-                borderRadius: '16px',
+                padding: '12px 20px',
+                borderRadius: '20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -66,7 +66,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
               }}
             >
-              <img src="/logo.png" alt="Logo" style={{ height: '32px', objectFit: 'contain' }} />
+              <img src="/logo.png" alt="Logo" style={{ height: '56px', objectFit: 'contain' }} />
             </div>
             <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
               {COMPANY_NAME}
@@ -113,7 +113,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
                 }}
               />
             </div>
-            
+
             {/* Password */}
             <div style={{ marginBottom: '8px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#CBD5E1', marginBottom: '6px' }}>
